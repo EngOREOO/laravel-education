@@ -1,0 +1,282 @@
+%-------------------------
+% Resume in Latex
+% Author : Harshibar
+% Based off of: https://github.com/jakeryang/resume
+% License : MIT
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+% only for pdflatex
+% \input{glyphtounicode}
+
+% fontawesome
+\usepackage{fontawesome5}
+
+% fixed width
+\usepackage[scale=0.90,lf]{FiraMono}
+
+% light-grey
+\definecolor{light-grey}{gray}{0.83}
+\definecolor{dark-grey}{gray}{0.3}
+\definecolor{text-grey}{gray}{.08}
+
+\DeclareRobustCommand{\ebseries}{\fontseries{eb}\selectfont}
+\DeclareTextFontCommand{\texteb}{\ebseries}
+
+% custom underilne
+\usepackage{contour}
+\usepackage[normalem]{ulem}
+\renewcommand{\ULdepth}{1.8pt}
+\contourlength{0.8pt}
+\newcommand{\myuline}[1]{%
+  \uline{\phantom{#1}}%
+  \llap{\contour{white}{#1}}%
+}
+
+
+% custom font: helvetica-style
+\usepackage{tgheros}
+\renewcommand*\familydefault{\sfdefault} 
+%% Only if the base font of the document is to be sans serif
+\usepackage[T1]{fontenc}
+
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{0in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting - serif
+% \titleformat{\section}{
+%   \vspace{2pt} \scshape \raggedright\large % header section
+% }{}{0em}{}[\color{black} \titlerule \vspace{-5pt}]
+
+% TODO EBSERIES
+% sans serif sections
+\titleformat {\section}{
+    \bfseries \vspace{2pt} \raggedright \large % header section
+}{}{0em}{}[\color{light-grey} {\titlerule[2pt]} \vspace{-4pt}]
+
+% only for pdflatex
+% Ensure that generate pdf is machine readable/ATS parsable
+% \pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-1pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-1pt}\item
+    \begin{tabular*}{\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & {\color{dark-grey}\small #2}\vspace{1pt}\\ % top row of resume entry
+      \textit{#3} & {\color{dark-grey} \small #4}\\ % second row of resume entry
+    \end{tabular*}\vspace{-4pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+      #1 & {\color{dark-grey}} \\
+    \end{tabular*}\vspace{-4pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+% CHANGED default leftmargin  0.15 in
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{0pt}}
+
+\color{text-grey}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    \textbf{\Huge Ahmed Hany} \\ \vspace{5pt}
+    \small \faPhone* \texttt{+201061370451} \hspace{1pt} $|$
+    \hspace{1pt} \faEnvelope \hspace{2pt} \texttt{ahmed.hany.off@gmail.com} \hspace{1pt} $|$ 
+    \hspace{1pt} \faMapMarker* \hspace{2pt}\texttt{Mansoura, Egypt}
+    \\ \vspace{-3pt}
+\end{center}
+
+%-----------PROFESSIONAL SUMMARY-----------
+\section{PROFESSIONAL SUMMARY}
+\begin{itemize}[leftmargin=0in, label={}]
+    \small{\item{
+    Web Developer specializing in back end development. Experienced with all stages of the development cycle for dynamic web projects. Well-versed in numerous programming languages and concepts including PHP, Laravel, OOP, MySQL, Livewire, REST API, SOLID principles, Filament, HTML \& CSS, Git. Strong knowledge of design patterns such as MVC, Repository, and Service design patterns. Basic background in project management.
+    }}
+\end{itemize}
+
+%-----------EXPERIENCE-----------
+\section{EXPERIENCE}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {PrintLana}{Aug. 2024 -- May 2025}
+      {Full Stack Developer / Project Manager}{Saudi Arabia · Remote}
+      \resumeItemListStart
+        \resumeItem{Spearheaded the development of \textbf{scalable websites and E-Commerce platforms} using WordPress and custom PHP scripting}
+        \resumeItem{Managed project timelines and coordinated development teams to ensure timely delivery of web solutions}
+        \resumeItem{Developed custom WordPress themes and plugins to meet specific client requirements}
+        \resumeItem{Implemented \textbf{responsive design principles} and optimized websites for performance and SEO}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {RoyalTechni}{Feb. 2024 -- Jul. 2024}
+      {Full Stack Developer}{United Arab Emirates · Remote}
+      \resumeItemListStart
+        \resumeItem{Engineered a robust \textbf{SaaS solution for the education sector}, digitally transforming administrative and learning operations for schools}
+        \resumeItem{Architected \textbf{scalable, multi-tenant SaaS platforms} for EdTech sector using Laravel, serving schools and universities}
+        \resumeItem{Engineered \textbf{course management system (CMS)} with video, quiz, and content management capabilities}
+        \resumeItem{Implemented \textbf{subscription management and payment gateway integration} for recurring billing}
+        \resumeItem{Led development on Arabic language platform with \textbf{full RTL UI support} and optimized database queries for performance}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Nawy Media}{Feb. 2022 -- Jul. 2025}
+      {Full Stack Developer}{Dammam, Eastern, Saudi Arabia · Remote}
+      \resumeItemListStart
+        \resumeItem{Managed the full software development lifecycle for varied web platforms, applying advanced engineering practices using Laravel, Livewire, and FilamentPHP}
+        \resumeItem{Designed optimized database structures (MySQL/PostgreSQL) and developed \textbf{secure RESTful APIs} using Laravel}
+        \resumeItem{Built internal dashboards with \textbf{FilamentPHP} and implemented dynamic interfaces with \textbf{Livewire}}
+        \resumeItem{Applied \textbf{SOLID principles} with Repository and Service patterns and managed full development cycle from planning to deployment using Git}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Freelance}{Jan. 2020 -- Present}
+      {Backend Laravel Developer}{Remote}
+      \resumeItemListStart
+        \resumeItem{Developed and maintained multiple backend systems using \textbf{Laravel framework} and \textbf{FilamentPHP} for various clients}
+        \resumeItem{Built \textbf{RESTful APIs} and integrated third-party services to enhance application functionality}
+        \resumeItem{Designed and optimized database schemas using MySQL and PostgreSQL for high-performance applications}
+        \resumeItem{Collaborated with clients to understand requirements and deliver scalable backend solutions}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+
+%-----------PROJECTS-----------
+
+\section{PROJECTS}
+    \resumeSubHeadingListStart
+      \resumeProjectHeading
+          {\textbf{Asta} $|$ \emph{E-Learning Platform (Udemy-style for Saudi Arabia)}}{}
+          \resumeItemListStart
+            \resumeItem{Developed a comprehensive online learning platform similar to Udemy, tailored for the Saudi Arabian market}
+            \resumeItem{Link: \href{https://asta.edu.sa/}{\myuline {asta.edu.sa}}}
+          \resumeItemListEnd
+          
+       
+          
+      \resumeProjectHeading
+         {\textbf{UNMCO} $|$ \emph{Corporate Website}}{}
+          \resumeItemListStart
+            \resumeItem{Developed a corporate website with multilingual support and content management capabilities}
+            \resumeItem{Link: \href{https://unmco.sa/}{\myuline {unmco.sa}}}
+          \resumeItemListEnd
+          
+      \resumeProjectHeading
+         {\textbf{Elmahdy Techno Light} $|$ \emph{E-commerce \& Management Systems}}{}
+          \resumeItemListStart
+            \resumeItem{Developed main e-commerce platform with Arabic language support and product catalog}
+            \resumeItem{Built \textbf{Equipment Tracking System} for inventory and asset management}
+            \resumeItem{Created \textbf{Fingerprint Attendance System} for employee time tracking and management}
+            \resumeItem{Links: \href{https://www.elmahdy-techno-light.com/ar}{\myuline {elmahdy-techno-light.com}}, \href{https://tools.elmahdy-techno-light.com}{\myuline {tools.elmahdy-techno-light.com}}, \href{https://elmahdy-techno-light.com/fingerprint}{\myuline {fingerprint system}}}
+          \resumeItemListEnd
+          
+      \resumeProjectHeading
+         {\textbf{Elshamel Online} $|$ \emph{Educational Testing Platform}}{}
+          \resumeItemListStart
+            \resumeItem{Developed an educational platform for aptitude tests targeting students in Saudi Arabia}
+            \resumeItem{Link: \href{https://elshamel.online/}{\myuline {elshamel.online}}}
+          \resumeItemListEnd
+          
+      \resumeProjectHeading
+         {\textbf{Seamless KSA} $|$ \emph{Real Estate Platform}}{}
+          \resumeItemListStart
+            \resumeItem{Built a comprehensive real estate website for the Saudi Arabian market with property listings and search functionality}
+            \resumeItem{Link: \href{https://seamlessksa.com/en}{\myuline {seamlessksa.com}}}
+          \resumeItemListEnd
+          
+    \resumeSubHeadingListEnd
+
+
+
+%-----------EDUCATION-----------
+\section {EDUCATION}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Delta Higher Institute}{Graduated 2024}
+      {Bachelor of Management Information Systems}{Mansoura, Egypt}
+  \resumeSubHeadingListEnd
+
+
+%
+%-----------PROGRAMMING SKILLS-----------
+\section{TECHNICAL SKILLS}
+ \begin{itemize}[leftmargin=0in, label={}]
+    \small{\item{
+     \textbf{Languages \& Frameworks} {: PHP, Laravel, Livewire, JavaScript, HTML/CSS, SQL (MySQL, PostgreSQL)}\vspace{2pt} \\
+     \textbf{Tools \& Technologies}     {: Git, FilamentPHP, REST API, Docker, Postman, Redis, Composer}\vspace{2pt} \\
+     \textbf{Concepts \& Patterns}     {: OOP, SOLID Principles, MVC, Repository Pattern, Service Pattern, Multi-tenancy}\vspace{2pt} \\
+     \textbf{Soft Skills}     {: Strong Decision Making, Project Management, Complex Problem Solving, Database Design, Logical Analysis}
+    }}
+ \end{itemize}
+
+%-----------LANGUAGES-----------
+\section{LANGUAGES}
+ \begin{itemize}[leftmargin=0in, label={}]
+    \small{\item{
+     \textbf{Arabic} {: Native}\vspace{2pt} \\
+     \textbf{English}     {: Intermediate}
+    }}
+ \end{itemize}
+
+
+%-------------------------------------------
+\end{document}

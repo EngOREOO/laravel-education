@@ -266,6 +266,11 @@ public function store(Request $request)
         'content' => $request->content,
         'author' => $request->author
     ]);
+
+     // ممكن نستغني عن كل الأسطر دي ونعمل ابديت بسطر واحد بس
+    $blog = Blog::create($request->all());
+    // هنا خدنا كل الداتا الي جوا الريكويست وقلنا ل لارافيل خزنهالي كلها بدل م اعمل 4 او 5 اسطر زي مهو موجود فوق كده
+    
     
     // ارجع لصفحة المقالات مع رسالة نجاح
     return redirect()->route('posts.index')
@@ -333,6 +338,10 @@ public function update(Request $request, $id)
         'content' => $request->content,
         'author' => $request->author
     ]);
+
+    // ممكن نستغني عن كل الأسطر دي ونعمل ابديت بسطر واحد بس
+    $blog->update($request->all());
+    // هنا خدنا كل الداتا الي جوا الريكويست وقلنا ل لارافيل حدثيها كلها بدل م اعمل 4 او 5 اسطر زي مهو موجود فوق كده
     
     // ارجع مع رسالة نجاح
     return redirect()->route('posts.index')
@@ -347,10 +356,13 @@ public function update(Request $request, $id)
 ```php
 public function destroy($id)
 {
-    // جيب المقال وامسحه
+    // جيب المقال وامسحه 1
     $post = Post::findOrFail($id);
     $post->delete();
-    
+
+    // نقدر نعملها ف خطوه واحده بس لو عملنا كده 2
+    // سطر واحد بيقوم بالي بيعمله السطرين 
+    $post = Post::findOrFail($id)->delete();
     // ارجع مع رسالة نجاح
     return redirect()->route('posts.index')
         ->with('success', 'المقال اتمسح بنجاح!');
