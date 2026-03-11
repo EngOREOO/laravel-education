@@ -15,14 +15,14 @@
 
 دي المواد التأسيسية الموجودة بالفعل، ويفضل استخدامها في بداية الكورس:
 
-- `laravel-setup-guide.md`: إنشاء المشروع، ربط قاعدة البيانات، Breeze، التشغيل الأول.
-- `laravel-env-guide.md`: فهم ملف `.env` والإعدادات الأساسية.
-- `شرح_MVC.md` و `laravel-mvc-detailed-guide.md`: فهم MVC ودورة الطلب.
-- `laravel-models-guide.md`: أساسيات الـ Model وعمليات Eloquent الأساسية.
-- `laravel-controllers-guide.md`: الـ Controllers وResource Controllers وPatterns مهمة.
-- `laravel-migration-deep-guide.md`: Migrations وأنواع الأعمدة والتعديل على الجداول.
-- `laravel-relationships-guide.md`: العلاقات الأساسية والمتقدمة.
-- `(Advanced) laravel-crud-blog-guide.md`: مشروع CRUD عملي يربط المفاهيم ببعض.
+- `01-laravel-setup-guide.md`: إنشاء المشروع، ربط قاعدة البيانات، Breeze، التشغيل الأول.
+- `02-laravel-env-guide.md`: فهم ملف `.env` والإعدادات الأساسية.
+- `03-laravel-mvc-guide.md` و `12-laravel-mvc-detailed-guide.md`: فهم MVC ودورة الطلب.
+- `09-laravel-models-guide.md`: أساسيات الـ Model وعمليات Eloquent الأساسية.
+- `07-laravel-controllers-guide.md`: الـ Controllers وResource Controllers وPatterns مهمة.
+- `08-laravel-migration-deep-guide.md`: Migrations وأنواع الأعمدة والتعديل على الجداول.
+- `10-laravel-relationships-guide.md`: العلاقات الأساسية والمتقدمة.
+- `11-laravel-crud-blog-guide.md`: مشروع CRUD عملي يربط المفاهيم ببعض.
 
 ملاحظة:
 الملفات `AGENTS.md`, `AGENT.md`, `CLAUDE.md` تعليمات عمل للأدوات وليست مادة شرح Laravel، و`project/README.md` و`README.md` ليسا مصدرًا تعليميًا أساسيًا للكورس.
@@ -57,7 +57,7 @@
 
 #### Lecture 2: Setup عملي للمشروع
 - المصادر:
-  - `laravel-setup-guide.md`
+  - `01-laravel-setup-guide.md`
   - `docs-12.x/starter-kits.md`
   - `docs-12.x/frontend.md`
 - الهدف:
@@ -67,7 +67,7 @@
 
 #### Lecture 3: Environment + Configuration
 - المصادر:
-  - `laravel-env-guide.md`
+  - `02-laravel-env-guide.md`
   - `docs-12.x/configuration.md`
 - الهدف:
   - فهم `.env`.
@@ -78,7 +78,7 @@
 - المصادر:
   - `docs-12.x/lifecycle.md`
   - `docs-12.x/structure.md`
-  - `شرح_MVC.md`
+  - `03-laravel-mvc-guide.md`
 - الهدف:
   - الطلب يدخل Laravel إزاي.
   - دور `public`, `routes`, `app`, `bootstrap`, `config`, `resources`.
@@ -89,8 +89,8 @@
 
 #### Lecture 5: MVC Fundamentals
 - المصادر:
-  - `شرح_MVC.md`
-  - `laravel-mvc-detailed-guide.md`
+  - `03-laravel-mvc-guide.md`
+  - `12-laravel-mvc-detailed-guide.md`
 - الهدف:
   - العلاقة بين Model وView وController.
   - Route -> Controller -> Model -> View.
@@ -107,7 +107,7 @@
 
 #### Lecture 7: Controllers
 - المصادر:
-  - `laravel-controllers-guide.md`
+  - `07-laravel-controllers-guide.md`
   - `docs-12.x/controllers.md`
 - الهدف:
   - controllers العادية.
@@ -135,7 +135,7 @@
 #### Lecture 10: Validation
 - المصادر:
   - `docs-12.x/validation.md`
-  - `laravel-controllers-guide.md`
+  - `07-laravel-controllers-guide.md`
 - الهدف:
   - validation quickstart.
   - Form Request Validation.
@@ -175,8 +175,8 @@
 
 #### Lecture 14: Practical MVC Mini Project
 - المصادر:
-  - `(Advanced) laravel-crud-blog-guide.md`
-  - `laravel-mvc-detailed-guide.md`
+  - `11-laravel-crud-blog-guide.md`
+  - `12-laravel-mvc-detailed-guide.md`
 - الهدف:
   - تطبيق حي يربط routing + controller + model + views.
 
@@ -187,7 +187,7 @@
 #### Lecture 15: Database Basics
 - المصادر:
   - `docs-12.x/database.md`
-  - `laravel-env-guide.md`
+  - `02-laravel-env-guide.md`
 - الهدف:
   - الاتصال بقاعدة البيانات.
   - تشغيل queries مباشرة.
@@ -195,7 +195,7 @@
 
 #### Lecture 16: Migrations
 - المصادر:
-  - `laravel-migration-deep-guide.md`
+  - `08-laravel-migration-deep-guide.md`
   - `docs-12.x/migrations.md`
 - الهدف:
   - إنشاء الجداول.
@@ -224,7 +224,7 @@
 
 #### Lecture 19: Eloquent Fundamentals
 - المصادر:
-  - `laravel-models-guide.md`
+  - `09-laravel-models-guide.md`
   - `docs-12.x/eloquent.md`
 - الهدف:
   - model conventions.
@@ -234,7 +234,7 @@
 
 #### Lecture 20: Eloquent Relationships
 - المصادر:
-  - `laravel-relationships-guide.md`
+  - `10-laravel-relationships-guide.md`
   - `docs-12.x/eloquent-relationships.md`
 - الهدف:
   - one to one.
@@ -577,17 +577,17 @@
 
 لو هتبدأ الشرح فورًا، هذا هو التسلسل العملي الأنسب:
 
-1. `laravel-setup-guide.md`
-2. `laravel-env-guide.md`
-3. `شرح_MVC.md`
-4. `laravel-routing-guide.md`
-5. `laravel-requests-validation-responses-guide.md`
-6. `laravel-views-blade-guide.md`
-7. `laravel-controllers-guide.md`
-8. `laravel-migration-deep-guide.md`
-9. `laravel-models-guide.md`
-10. `laravel-relationships-guide.md`
-11. `(Advanced) laravel-crud-blog-guide.md`
+1. `01-laravel-setup-guide.md`
+2. `02-laravel-env-guide.md`
+3. `03-laravel-mvc-guide.md`
+4. `04-laravel-routing-guide.md`
+5. `05-laravel-requests-validation-responses-guide.md`
+6. `06-laravel-views-blade-guide.md`
+7. `07-laravel-controllers-guide.md`
+8. `08-laravel-migration-deep-guide.md`
+9. `09-laravel-models-guide.md`
+10. `10-laravel-relationships-guide.md`
+11. `11-laravel-crud-blog-guide.md`
 12. ثم الانتقال التدريجي إلى ملفات `docs-12.x` حسب الرودماب أعلاه
 
 ---

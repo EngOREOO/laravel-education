@@ -8,9 +8,9 @@
 
 ## المرحلة الأولى: البداية والتأسيس
 
-1. `laravel-setup-guide.md`
-2. `laravel-env-guide.md`
-3. `شرح_MVC.md`
+1. `01-laravel-setup-guide.md`
+2. `02-laravel-env-guide.md`
+3. `03-laravel-mvc-guide.md`
 
 الهدف من المرحلة:
 - إنشاء المشروع وتشغيله.
@@ -21,10 +21,10 @@
 
 ## المرحلة الثانية: حركة الطلب داخل Laravel
 
-4. `laravel-routing-guide.md`
-5. `laravel-requests-validation-responses-guide.md`
-6. `laravel-views-blade-guide.md`
-7. `laravel-controllers-guide.md`
+4. `04-laravel-routing-guide.md`
+5. `05-laravel-requests-validation-responses-guide.md`
+6. `06-laravel-views-blade-guide.md`
+7. `07-laravel-controllers-guide.md`
 
 الهدف من المرحلة:
 - فهم الرابط يروح فين.
@@ -36,9 +36,9 @@
 
 ## المرحلة الثالثة: البيانات وقاعدة البيانات
 
-8. `laravel-migration-deep-guide.md`
-9. `laravel-models-guide.md`
-10. `laravel-relationships-guide.md`
+8. `08-laravel-migration-deep-guide.md`
+9. `09-laravel-models-guide.md`
+10. `10-laravel-relationships-guide.md`
 
 الهدف من المرحلة:
 - تصميم الجداول.
@@ -49,7 +49,7 @@
 
 ## المرحلة الرابعة: التطبيق العملي
 
-11. `(Advanced) laravel-crud-blog-guide.md`
+11. `11-laravel-crud-blog-guide.md`
 
 الهدف من المرحلة:
 - ربط ما سبق كله في مشروع CRUD عملي كامل.
@@ -58,7 +58,7 @@
 
 ## المرحلة الخامسة: التوسع التدريجي
 
-12. `laravel-mvc-detailed-guide.md`
+12. `12-laravel-mvc-detailed-guide.md`
 13. `docs-12.x/installation.md`
 14. `docs-12.x/routing.md`
 15. `docs-12.x/requests.md`
@@ -94,13 +94,13 @@
 
 ## الدرس الذي يلي الحالي
 
-بعد `laravel-views-blade-guide.md` الدرس المنطقي التالي هو:
+بعد `06-laravel-views-blade-guide.md` الدرس المنطقي التالي هو:
 
-`laravel-controllers-guide.md`
+`07-laravel-controllers-guide.md`
 
 لكن لو هدفك تمشي حسب بناء التطبيق من الواجهة للبيانات مباشرة، تقدر تبدأ بعده في:
 
-`laravel-migration-deep-guide.md`
+`08-laravel-migration-deep-guide.md`
 
 الاختيار الأنسب هنا يعتمد على أسلوبك في التدريس:
 
