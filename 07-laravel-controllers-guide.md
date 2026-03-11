@@ -1,67 +1,124 @@
 <div dir="rtl">
 
-# 🎮 شرح Controllers في لارافيل - الدليل الشامل
+# شرح Controllers في Laravel
 
-### فهم المتحكمات (Controllers) من الصفر للاحتراف
+### دليل عملي مفصل للمبتدئ مع Clean Code و Best Practices
 
 ---
 
-## 🤔 يعني إيه Controller؟
+## مقدمة
 
-**تخيل معايا مطعم:**
+بعد ما فهمت:
 
+- الـ Route
+- الـ Request
+- الـ Validation
+- الـ Response
+- الـ Views و Blade
+
+فأنت محتاج الآن تفهم الجزء الذي يربط كل ده ببعض:
+
+## الـ Controller
+
+الـ Controller هو المكان الذي يستقبل الطلب من الـ Route، ينسق الشغل، ويتأكد أن الرد النهائي يطلع بشكل صحيح.
+
+بصيغة أبسط:
+
+> الـ Route يحدد "فين نروح"، والـ Controller يحدد "نعمل إيه".
+
+---
+
+## يعني إيه Controller؟
+
+تخيل إن عندك مطعم:
+
+- العميل = المستخدم
+- المنيو = الـ Routes
+- الويتر = الـ Controller
+- المطبخ = الـ Models / Services / Database
+- الطبق النهائي = الـ Response
+
+العميل لا يدخل المطبخ مباشرة.
+هو يكلم الويتر.
+والويتر هو الذي:
+
+- يستقبل الطلب
+- يفهم المطلوب
+- يمرر التنفيذ للجهة المناسبة
+- يرجع النتيجة
+
+وده بالضبط دور الـ Controller.
+
+---
+
+## الوظيفة الحقيقية للـ Controller
+
+الـ Controller ليس مكانًا لكتابة كل شيء.
+
+وظيفته الأساسية:
+
+1. يستقبل الطلب.
+2. يستدعي الـ validation المناسبة.
+3. يستدعي الـ model أو service أو action المناسبة.
+4. يحدد شكل الـ response.
+
+يعني:
+
+> الـ Controller ينسق ولا يتورط.
+
+وده أول مبدأ مهم جدًا في `clean code`.
+
+---
+
+## الـ Controller في دورة الطلب
+
+خلينا نمشي على السيناريو الطبيعي:
+
+```text
+المستخدم يفتح /products
+↓
+Laravel يلاقي route مناسبة
+↓
+route تنادي ProductController@index
+↓
+controller يجيب البيانات
+↓
+controller يرسلها إلى view
+↓
+المستخدم يشوف الصفحة
 ```
-العميل (User)          →  "عايز برجر"
-الويتر (Controller)    →  "حاضر، هجيبلك الطلب"
-المطبخ (Model)         →  يحضر الطلب
-الويتر (Controller)    →  يجيب الطلب للعميل
+
+أو في حالة الحفظ:
+
+```text
+المستخدم يرسل form
+↓
+route تنادي ProductController@store
+↓
+controller يعمل validation
+↓
+controller يحفظ البيانات
+↓
+controller يعمل redirect برسالة نجاح
 ```
 
-**الـ Controller = المدير اللي بينظم كل حاجة!**
-
 ---
 
-## 📚 دور الـ Controller
+## إنشاء Controller
 
-الـ Controller مسؤول عن:
-
-✅ **استقبال الطلب** من المستخدم (Request)  
-✅ **التحقق من البيانات** (Validation)  
-✅ **التعامل مع الـ Model** (جيب/احفظ/عدّل البيانات)  
-✅ **إرجاع النتيجة** للمستخدم (Response)  
-
----
-
-## 🎯 تشبيه كامل: المطعم
-
-| المطعم | لارافيل |
-|--------|---------|
-| العميل | المستخدم (User) |
-| القائمة | الـ Routes |
-| الويتر | الـ Controller |
-| المطبخ | الـ Model |
-| الطبق | الـ View |
-
-**السيناريو:**
-1. العميل يطلب من القائمة (Route)
-2. الويتر ياخد الطلب (Controller)
-3. الويتر يروح للمطبخ (Model)
-4. المطبخ يحضّر الطلب (Database)
-5. الويتر يجيب الطلب (Controller)
-6. العميل ياكل (View/Response)
-
----
-
-## 🏗️ إنشاء Controller
-
-### الطريقة الأولى: Controller عادي
+### Controller عادي
 
 ```bash
 php artisan make:controller ProductController
 ```
 
-**النتيجة:**  
-ملف في `app/Http/Controllers/ProductController.php`
+ده يعمل ملف هنا:
+
+```text
+app/Http/Controllers/ProductController.php
+```
+
+وشكله الأساسي يكون قريب من:
 
 ```php
 <?php
@@ -72,659 +129,834 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    // دوالك هنا
+    //
 }
 ```
 
 ---
 
-### الطريقة الثانية: Resource Controller
+## Resource Controller
+
+لو عندك CRUD، الأفضل غالبًا تستخدم:
 
 ```bash
 php artisan make:controller ProductController --resource
 ```
 
-**النتيجة:**  
-Controller مع 7 دوال جاهزة للـ CRUD!
+Laravel يجهز لك الدوال الأساسية:
 
 ```php
-class ProductController extends Controller
-{
-    public function index()      // عرض كل المنتجات
-    public function create()     // صفحة إضافة منتج
-    public function store()      // حفظ منتج جديد
-    public function show()       // عرض منتج واحد
-    public function edit()       // صفحة تعديل منتج
-    public function update()     // حفظ التعديلات
-    public function destroy()    // حذف منتج
-}
+public function index() {}
+public function create() {}
+public function store(Request $request) {}
+public function show(string $id) {}
+public function edit(string $id) {}
+public function update(Request $request, string $id) {}
+public function destroy(string $id) {}
 ```
+
+ودي ليست مجرد أسماء.
+دي تمثل دورة CRUD الكاملة.
 
 ---
 
-### الطريقة الثالثة: API Resource Controller
+## API Controller
+
+لو أنت تبني API فقط:
 
 ```bash
 php artisan make:controller Api/ProductController --api
 ```
 
-**الفرق:**  
-بدون `create()` و `edit()` (لأن الـ API مش محتاجهم)
+هنا Laravel لا يضع:
+
+- `create()`
+- `edit()`
+
+لأن الـ API لا تعرض صفحات form غالبًا.
 
 ---
 
-### الطريقة الرابعة: Single Action Controller
+## Single Action Controller
+
+لو عندك مهمة واحدة فقط:
 
 ```bash
-php artisan make:controller SendEmailController --invokable
+php artisan make:controller PublishPostController --invokable
 ```
 
+وساعتها يكون عندك method واحدة فقط:
+
 ```php
-class SendEmailController extends Controller
+public function __invoke()
 {
-    public function __invoke()
-    {
-        // دالة واحدة بس
-    }
+    //
 }
 ```
 
+وده ممتاز للعمليات الواضحة جدًا مثل:
+
+- publish
+- resend email
+- approve request
+- export report
+
 ---
 
-## 📂 بنية الـ Controller
+## أين نستخدم Controller وأين لا؟
 
-### Controller بسيط:
+استخدم Controller لما:
+
+- عندك route تحتاج منطق واضح
+- تريد تنظيم التطبيق
+- عندك CRUD
+- تحتاج validation + response + binding
+
+لا تضع المنطق في:
+
+- route closures الكثيرة
+- views
+- model بشكل عشوائي
+
+المشروع الصغير قد يحتمل closures.
+لكن المشروع النظيف الحقيقي يحتاج Controllers واضحة.
+
+---
+
+# الجزء الأول: الدوال الأساسية في Resource Controller
+
+## 1. `index()`
+
+### وظيفتها
+
+عرض قائمة من السجلات.
+
+### مثال
 
 ```php
-<?php
-
-namespace App\Http\Controllers;
-
 use App\Models\Product;
-use Illuminate\Http\Request;
 
-class ProductController extends Controller
-{
-    public function index()
-    {
-        // جيب كل المنتجات
-        $products = Product::all();
-        
-        // ابعتهم للـ View
-        return view('products.index', compact('products'));
-    }
-}
-```
-
----
-
-## 🎯 الدوال الـ 7 في Resource Controller
-
-### 1️⃣ `index()` - عرض كل السجلات
-
-**الغرض:** صفحة تعرض قائمة بكل المنتجات
-
-```php
 public function index()
 {
-    // جيب كل المنتجات مع الفئات
-    $products = Product::with('category')
-                       ->latest()
-                       ->paginate(10);
-    
+    $products = Product::latest()->paginate(10);
+
     return view('products.index', compact('products'));
 }
 ```
 
-**الـ Route:**
-```
+### معناها
+
+- هات المنتجات
+- رتبها من الأحدث
+- قسمها صفحات
+- اعرضها في view
+
+### route المتوقعة
+
+```text
 GET /products
 ```
 
 ---
 
-### 2️⃣ `create()` - صفحة إضافة سجل جديد
+## 2. `create()`
 
-**الغرض:** صفحة فيها فورم لإضافة منتج
+### وظيفتها
+
+عرض صفحة إنشاء سجل جديد.
+
+### مثال
 
 ```php
+use App\Models\Category;
+
 public function create()
 {
-    // جيب الفئات عشان القائمة المنسدلة
-    $categories = Category::all();
-    
+    $categories = Category::orderBy('name')->get();
+
     return view('products.create', compact('categories'));
 }
 ```
 
-**الـ Route:**
-```
+### ملاحظات
+
+الدالة دي لا تحفظ شيئًا.
+هي فقط تعرض form.
+
+### route المتوقعة
+
+```text
 GET /products/create
 ```
 
 ---
 
-### 3️⃣ `store()` - حفظ السجل الجديد
+## 3. `store()`
 
-**الغرض:** حفظ البيانات اللي جاية من الفورم
+### وظيفتها
+
+استقبال البيانات القادمة من الفورم وحفظها.
+
+### مثال بسيط
 
 ```php
+use App\Models\Product;
+use Illuminate\Http\Request;
+
 public function store(Request $request)
 {
-    // 1. تحقق من البيانات
     $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'price' => 'required|numeric|min:0',
-        'quantity' => 'required|integer|min:0',
-        'category_id' => 'required|exists:categories,id'
+        'name' => ['required', 'string', 'max:255'],
+        'price' => ['required', 'numeric', 'min:0'],
     ]);
-    
-    // 2. احفظ المنتج
-    $product = Product::create($validated);
-    
-    // 3. ارجع مع رسالة نجاح
-    return redirect()->route('products.index')
-                     ->with('success', 'المنتج تم إضافته بنجاح!');
+
+    Product::create($validated);
+
+    return redirect()
+        ->route('products.index')
+        ->with('success', 'تمت إضافة المنتج بنجاح');
 }
 ```
 
-**الـ Route:**
-```
+### route المتوقعة
+
+```text
 POST /products
 ```
 
 ---
 
-### 4️⃣ `show($id)` - عرض سجل واحد
+## 4. `show()`
 
-**الغرض:** صفحة تفاصيل منتج معين
+### وظيفتها
+
+عرض سجل واحد فقط.
+
+### مثال تقليدي
 
 ```php
-public function show($id)
+use App\Models\Product;
+
+public function show(string $id)
 {
-    // جيب المنتج مع علاقاته
-    $product = Product::with(['category', 'comments'])
-                      ->findOrFail($id);
-    
+    $product = Product::findOrFail($id);
+
     return view('products.show', compact('product'));
 }
 ```
 
-**أو باستخدام Route Model Binding:**
+### الأفضل
+
+استخدم Route Model Binding:
+
 ```php
+use App\Models\Product;
+
 public function show(Product $product)
 {
-    // Laravel بيجيب المنتج تلقائياً!
     return view('products.show', compact('product'));
 }
 ```
 
-**الـ Route:**
-```
-GET /products/{id}
+### route المتوقعة
+
+```text
+GET /products/{product}
 ```
 
 ---
 
-### 5️⃣ `edit($id)` - صفحة تعديل سجل
+## 5. `edit()`
 
-**الغرض:** صفحة فورم لتعديل المنتج
+### وظيفتها
+
+عرض صفحة تعديل سجل موجود.
+
+### مثال
 
 ```php
-public function edit($id)
-{
-    $product = Product::findOrFail($id);
-    $categories = Category::all();
-    
-    return view('products.edit', compact('product', 'categories'));
-}
-```
+use App\Models\Category;
+use App\Models\Product;
 
-**أو:**
-```php
 public function edit(Product $product)
 {
-    $categories = Category::all();
+    $categories = Category::orderBy('name')->get();
+
     return view('products.edit', compact('product', 'categories'));
 }
 ```
 
-**الـ Route:**
-```
-GET /products/{id}/edit
+### route المتوقعة
+
+```text
+GET /products/{product}/edit
 ```
 
 ---
 
-### 6️⃣ `update($id)` - حفظ التعديلات
+## 6. `update()`
 
-**الغرض:** تحديث بيانات المنتج
+### وظيفتها
+
+استقبال البيانات المعدلة وتحديث السجل.
+
+### مثال
 
 ```php
-public function update(Request $request, $id)
-{
-    // 1. جيب المنتج
-    $product = Product::findOrFail($id);
-    
-    // 2. تحقق من البيانات
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'price' => 'required|numeric|min:0',
-        'quantity' => 'required|integer|min:0',
-        'category_id' => 'required|exists:categories,id'
-    ]);
-    
-    // 3. حدّث المنتج
-    $product->update($validated);
-    
-    // 4. ارجع مع رسالة
-    return redirect()->route('products.index')
-                     ->with('success', 'المنتج تم تعديله بنجاح!');
-}
-```
+use App\Models\Product;
+use Illuminate\Http\Request;
 
-**أو:**
-```php
 public function update(Request $request, Product $product)
 {
-    $validated = $request->validate([...]);
+    $validated = $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'price' => ['required', 'numeric', 'min:0'],
+    ]);
+
     $product->update($validated);
-    
-    return redirect()->route('products.index')
-                     ->with('success', 'تم التعديل!');
+
+    return redirect()
+        ->route('products.index')
+        ->with('success', 'تم تعديل المنتج بنجاح');
 }
 ```
 
-**الـ Route:**
-```
-PUT/PATCH /products/{id}
+### route المتوقعة
+
+```text
+PUT/PATCH /products/{product}
 ```
 
 ---
 
-### 7️⃣ `destroy($id)` - حذف سجل
+## 7. `destroy()`
 
-**الغرض:** حذف المنتج
+### وظيفتها
+
+حذف السجل.
+
+### مثال
 
 ```php
-public function destroy($id)
-{
-    $product = Product::findOrFail($id);
-    
-    // امسح الصورة لو موجودة
-    if ($product->image) {
-        Storage::delete($product->image);
-    }
-    
-    $product->delete();
-    
-    return redirect()->route('products.index')
-                     ->with('success', 'المنتج تم حذفه بنجاح!');
-}
-```
+use App\Models\Product;
 
-**أو:**
-```php
 public function destroy(Product $product)
 {
-    if ($product->image) {
-        Storage::delete($product->image);
-    }
-    
     $product->delete();
-    
-    return redirect()->route('products.index')
-                     ->with('success', 'تم الحذف!');
+
+    return redirect()
+        ->route('products.index')
+        ->with('success', 'تم حذف المنتج بنجاح');
 }
 ```
 
-**الـ Route:**
-```
-DELETE /products/{id}
+### route المتوقعة
+
+```text
+DELETE /products/{product}
 ```
 
 ---
 
-## 🔗 ربط الـ Controller بالـ Routes
+# الجزء الثاني: ربط الـ Controller بالـ Routes
 
-### الطريقة الأولى: Route Resource
+## Resource Route
+
+أفضل طريقة غالبًا في CRUD:
 
 ```php
 use App\Http\Controllers\ProductController;
+use Illuminate\Support\Facades\Route;
 
 Route::resource('products', ProductController::class);
 ```
 
-**دي سطر واحد بيعمل 7 Routes!**
+السطر ده يعمل لك 7 routes دفعة واحدة.
 
 ---
 
-### شوف الـ Routes اللي اتعملت:
+## كيف أعرف ما الذي تم إنشاؤه؟
 
 ```bash
 php artisan route:list
 ```
 
-**النتيجة:**
-```
-GET       /products              products.index
-GET       /products/create       products.create
-POST      /products              products.store
-GET       /products/{id}         products.show
-GET       /products/{id}/edit    products.edit
-PUT/PATCH /products/{id}         products.update
-DELETE    /products/{id}         products.destroy
+وغالبًا ستجد شيئًا مثل:
+
+```text
+GET|HEAD    products ............ products.index
+GET|HEAD    products/create ..... products.create
+POST        products ............ products.store
+GET|HEAD    products/{product} .. products.show
+GET|HEAD    products/{product}/edit products.edit
+PUT|PATCH   products/{product} .. products.update
+DELETE      products/{product} .. products.destroy
 ```
 
 ---
 
-### الطريقة الثانية: Route منفردة
+## only و except
+
+لو لا تريد كل الدوال:
 
 ```php
-Route::get('/products', [ProductController::class, 'index']);
-Route::post('/products', [ProductController::class, 'store']);
+Route::resource('products', ProductController::class)
+    ->only(['index', 'show']);
 ```
 
----
-
-### تحديد Routes معينة من الـ Resource:
+أو:
 
 ```php
-// استخدم index و show بس
 Route::resource('products', ProductController::class)
-     ->only(['index', 'show']);
-
-// استخدم كل حاجة إلا destroy
-Route::resource('products', ProductController::class)
-     ->except(['destroy']);
+    ->except(['destroy']);
 ```
 
 ---
 
-## 📝 أمثلة عملية كاملة
+## Route منفردة
 
-### مثال 1: Controller منتجات كامل
+لو عندك شيء خاص:
+
+```php
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+```
+
+وده عادي جدًا.
+ليس شرطًا أن تستخدم `resource` دائمًا.
+
+---
+
+# الجزء الثالث: مثال عملي نظيف
+
+خلينا نكتب مثالًا محترمًا لنظام منتجات.
+
+## Controller مرتب
 
 ```php
 <?php
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Product;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    /**
-     * عرض كل المنتجات
-     */
-    public function index()
+    public function index(): View
     {
-        $products = Product::with('category')
-                           ->latest()
-                           ->paginate(12);
-        
+        $products = Product::query()
+            ->with('category')
+            ->latest()
+            ->paginate(12);
+
         return view('products.index', compact('products'));
     }
 
-    /**
-     * صفحة إضافة منتج جديد
-     */
-    public function create()
+    public function create(): View
     {
-        $categories = Category::all();
+        $categories = Category::query()
+            ->orderBy('name')
+            ->get();
+
         return view('products.create', compact('categories'));
     }
 
-    /**
-     * حفظ منتج جديد
-     */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request): RedirectResponse
     {
-        // التحقق من البيانات
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer|min:0',
-            'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
-        ]);
-        
-        // رفع الصورة
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')
-                                          ->store('products', 'public');
-        }
-        
-        // حفظ المنتج
-        Product::create($validated);
-        
-        return redirect()->route('products.index')
-                         ->with('success', 'تم إضافة المنتج بنجاح!');
+        Product::create($request->validated());
+
+        return redirect()
+            ->route('products.index')
+            ->with('success', 'تمت إضافة المنتج بنجاح');
     }
 
-    /**
-     * عرض منتج معين
-     */
-    public function show(Product $product)
+    public function show(Product $product): View
     {
-        // جيب المنتج مع علاقاته
-        $product->load(['category', 'comments.user']);
-        
+        $product->load('category');
+
         return view('products.show', compact('product'));
     }
 
-    /**
-     * صفحة تعديل منتج
-     */
-    public function edit(Product $product)
+    public function edit(Product $product): View
     {
-        $categories = Category::all();
+        $categories = Category::query()
+            ->orderBy('name')
+            ->get();
+
         return view('products.edit', compact('product', 'categories'));
     }
 
-    /**
-     * تحديث المنتج
-     */
-    public function update(Request $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
-        // التحقق من البيانات
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer|min:0',
-            'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
-        ]);
-        
-        // لو فيه صورة جديدة
-        if ($request->hasFile('image')) {
-            // امسح الصورة القديمة
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-            }
-            
-            // احفظ الجديدة
-            $validated['image'] = $request->file('image')
-                                          ->store('products', 'public');
-        }
-        
-        // حدّث المنتج
-        $product->update($validated);
-        
-        return redirect()->route('products.index')
-                         ->with('success', 'تم تعديل المنتج بنجاح!');
+        $product->update($request->validated());
+
+        return redirect()
+            ->route('products.index')
+            ->with('success', 'تم تعديل المنتج بنجاح');
     }
 
-    /**
-     * حذف منتج
-     */
-    public function destroy(Product $product)
+    public function destroy(Product $product): RedirectResponse
     {
-        // امسح الصورة
-        if ($product->image) {
-            Storage::disk('public')->delete($product->image);
-        }
-        
-        // امسح المنتج
         $product->delete();
-        
-        return redirect()->route('products.index')
-                         ->with('success', 'تم حذف المنتج بنجاح!');
+
+        return redirect()
+            ->route('products.index')
+            ->with('success', 'تم حذف المنتج بنجاح');
     }
 }
 ```
 
 ---
 
-### مثال 2: API Controller
+## لماذا هذا المثال نظيف؟
+
+لأنه:
+
+- استخدم `Form Request` بدل validation داخل كل method
+- استخدم `Route Model Binding`
+- أرجع types واضحة مثل `View` و `RedirectResponse`
+- استخدم query builder chain بشكل منظم
+- لم يحشر منطقًا معقدًا داخل الـ controller
+
+وده هو الاتجاه الصحيح في `clean code`.
+
+---
+
+# الجزء الرابع: Clean Code داخل Controllers
+
+## القاعدة الذهبية
+
+> الـ Controller يجب أن يكون Thin Controller
+
+يعني:
+
+- منسق
+- واضح
+- قصير نسبيًا
+- لا يحمل business logic كبيرة
+
+---
+
+## ماذا نضع داخل الـ Controller؟
+
+ضع داخله:
+
+- استقبال الطلب
+- اختيار الـ validation
+- استدعاء service أو model
+- تحديد شكل الرد
+
+---
+
+## ماذا لا نضع داخل الـ Controller؟
+
+لا تضع داخله:
+
+- منطق business ضخم
+- عمليات معقدة جدًا على الملفات
+- حسابات طويلة
+- أكثر من مسؤولية
+- queries ضخمة مكررة في عدة methods
+
+---
+
+## مثال سيء
 
 ```php
-<?php
-
-namespace App\Http\Controllers\Api;
-
-use App\Http\Controllers\Controller;
-use App\Models\Product;
-use Illuminate\Http\Request;
-
-class ProductController extends Controller
+public function store(Request $request)
 {
-    /**
-     * جيب كل المنتجات
-     */
-    public function index()
-    {
-        $products = Product::with('category')->paginate(15);
-        
-        return response()->json([
-            'success' => true,
-            'data' => $products
-        ]);
+    $request->validate([
+        'name' => 'required',
+    ]);
+
+    $product = new Product();
+    $product->name = $request->name;
+    $product->slug = strtolower(str_replace(' ', '-', $request->name));
+    $product->price = $request->price;
+
+    if ($request->hasFile('image')) {
+        $file = $request->file('image');
+        $name = time().'_'.$file->getClientOriginalName();
+        $file->move(public_path('uploads/products'), $name);
+        $product->image = $name;
     }
 
-    /**
-     * حفظ منتج جديد
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'category_id' => 'required|exists:categories,id'
-        ]);
-        
-        $product = Product::create($validated);
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'تم إضافة المنتج',
-            'data' => $product
-        ], 201);
-    }
+    $product->save();
 
-    /**
-     * عرض منتج معين
-     */
-    public function show(Product $product)
-    {
-        $product->load('category');
-        
-        return response()->json([
-            'success' => true,
-            'data' => $product
-        ]);
-    }
+    Mail::to('admin@example.com')->send(new ProductCreatedMail($product));
+    Log::info('Product created', ['id' => $product->id]);
 
-    /**
-     * تحديث منتج
-     */
-    public function update(Request $request, Product $product)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'category_id' => 'required|exists:categories,id'
-        ]);
-        
-        $product->update($validated);
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'تم التحديث',
-            'data' => $product
-        ]);
-    }
-
-    /**
-     * حذف منتج
-     */
-    public function destroy(Product $product)
-    {
-        $product->delete();
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'تم الحذف'
-        ]);
-    }
+    return redirect('/products');
 }
 ```
 
+### المشكلة هنا
+
+الميثود دي أصبحت مسؤولة عن:
+
+- validation
+- بناء البيانات
+- رفع الملف
+- الحفظ
+- إرسال البريد
+- logging
+- redirect
+
+وده كثير جدًا على method واحدة.
+
 ---
 
-## 🎨 ميزات متقدمة في Controller
+## مثال أفضل
 
-### 1️⃣ Route Model Binding
-
-**بدل:**
 ```php
-public function show($id)
+public function store(StoreProductRequest $request, ProductService $productService): RedirectResponse
+{
+    $productService->create($request->validated());
+
+    return redirect()
+        ->route('products.index')
+        ->with('success', 'تمت إضافة المنتج بنجاح');
+}
+```
+
+### لماذا هذا أفضل؟
+
+لأن:
+
+- الـ validation خرجت إلى `StoreProductRequest`
+- منطق الإنشاء خرج إلى `ProductService`
+- الـ controller بقي مسؤولًا فقط عن التنسيق
+
+---
+
+# الجزء الخامس: Best Practices مهمة جدًا
+
+## 1. استخدم Form Requests
+
+بدل:
+
+```php
+public function store(Request $request)
+{
+    $request->validate([...]);
+}
+```
+
+الأفضل:
+
+```php
+public function store(StoreProductRequest $request)
+{
+    $data = $request->validated();
+}
+```
+
+### الفائدة
+
+- الكود أنظف
+- الـ rules معزولة
+- أسهل في الصيانة
+- أفضل في الاختبار
+
+---
+
+## 2. استخدم Route Model Binding
+
+بدل:
+
+```php
+public function show(string $id)
 {
     $product = Product::findOrFail($id);
-    return view('products.show', compact('product'));
 }
 ```
 
-**استخدم:**
+الأفضل:
+
 ```php
 public function show(Product $product)
 {
-    // Laravel بيجيب المنتج تلقائياً!
-    return view('products.show', compact('product'));
+    //
 }
 ```
 
+### الفائدة
+
+- أقل كود
+- أوضح
+- أقل تكرار
+- أخطاء أقل
+
 ---
 
-### 2️⃣ Dependency Injection
+## 3. سمِّ methods بشكل طبيعي
 
-**حقن التبعيات:**
+داخل resource controller استخدم الأسماء القياسية:
+
+- `index`
+- `create`
+- `store`
+- `show`
+- `edit`
+- `update`
+- `destroy`
+
+ولو method خاصة:
+
+- سمِّها على حسب الفعل بوضوح
+- مثال: `publish`, `archive`, `approve`
+
+---
+
+## 4. لا تكرر queries إن أمكن
+
+لو نفس الاستعلام يتكرر كثيرًا:
+
+- انقله إلى scope
+- أو service
+- أو repository لو المشروع يستخدم هذا النمط
+
+---
+
+## 5. لا تخلط Web Responses مع API Responses
+
+Controller الويب:
 
 ```php
-use App\Services\ProductService;
+return view(...);
+return redirect(...);
+```
 
-public function index(ProductService $productService)
+Controller الـ API:
+
+```php
+return response()->json(...);
+```
+
+لا تخلط الاثنين في controller واحد إلا لو عندك سبب قوي.
+
+---
+
+## 6. استخدم type hints و return types
+
+مثال:
+
+```php
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+
+public function index(): View
 {
-    $products = $productService->getAllProducts();
-    return view('products.index', compact('products'));
+    //
+}
+
+public function store(StoreProductRequest $request): RedirectResponse
+{
+    //
+}
+```
+
+### الفائدة
+
+- أوضح للقارئ
+- أفضل للأدوات
+- يقلل الالتباس
+
+---
+
+## 7. اعمل eager loading عند الحاجة
+
+بدل:
+
+```php
+$products = Product::all();
+```
+
+لما تحتاج العلاقات:
+
+```php
+$products = Product::with('category')->get();
+```
+
+عشان تتجنب مشكلة `N+1`.
+
+---
+
+## 8. استخدم pagination في القوائم
+
+بدل:
+
+```php
+$products = Product::all();
+```
+
+الأفضل غالبًا:
+
+```php
+$products = Product::latest()->paginate(10);
+```
+
+خصوصًا في الصفحات العامة ولوحة التحكم.
+
+---
+
+## 9. لا تضع authorization في الـ view فقط
+
+التحكم الحقيقي يجب أن يكون داخل:
+
+- controller
+- policy
+- middleware
+
+مثال:
+
+```php
+public function update(UpdateProductRequest $request, Product $product): RedirectResponse
+{
+    $this->authorize('update', $product);
+
+    $product->update($request->validated());
+
+    return redirect()->route('products.index');
 }
 ```
 
 ---
 
-### 3️⃣ Form Request Validation
+## 10. استخدم services عندما يكبر المنطق
 
-**إنشاء Form Request:**
+لو عملية الإنشاء أو التحديث تتضمن:
+
+- رفع ملفات
+- إرسال إيميلات
+- events
+- inventory logic
+- payment logic
+
+فغالبًا الأفضل إخراجها إلى Service.
+
+---
+
+# الجزء السادس: Form Requests
+
+## لماذا مهمة؟
+
+لأن validation المكتوبة مباشرة داخل controller تكبر بسرعة.
+
+### إنشاء Form Request
+
 ```bash
 php artisan make:request StoreProductRequest
+php artisan make:request UpdateProductRequest
 ```
 
-**في الـ Request:**
+### مثال
+
 ```php
 <?php
 
@@ -734,102 +966,70 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProductRequest extends FormRequest
 {
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
-    public function rules()
+    public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer|min:0',
-            'category_id' => 'required|exists:categories,id'
-        ];
-    }
-    
-    public function messages()
-    {
-        return [
-            'name.required' => 'اسم المنتج مطلوب',
-            'price.required' => 'السعر مطلوب',
-            'price.numeric' => 'السعر لازم يكون رقم'
+            'name' => ['required', 'string', 'max:255'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'category_id' => ['required', 'exists:categories,id'],
         ];
     }
 }
 ```
 
-**في الـ Controller:**
+### داخل controller
+
 ```php
-public function store(StoreProductRequest $request)
+public function store(StoreProductRequest $request): RedirectResponse
 {
-    // البيانات متحققة تلقائياً!
-    $validated = $request->validated();
-    
-    Product::create($validated);
-    
-    return redirect()->route('products.index')
-                     ->with('success', 'تم الإضافة!');
+    Product::create($request->validated());
+
+    return redirect()
+        ->route('products.index')
+        ->with('success', 'تمت إضافة المنتج بنجاح');
 }
 ```
 
 ---
 
-### 4️⃣ Middleware في Controller
+# الجزء السابع: Route Model Binding
 
-**تطبيق Middleware على كل الدوال:**
+## المثال التقليدي
+
 ```php
-class ProductController extends Controller
+public function edit(string $id): View
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    $product = Product::findOrFail($id);
+
+    return view('products.edit', compact('product'));
 }
 ```
 
-**تطبيق على دوال معينة:**
+## المثال الأفضل
+
 ```php
-public function __construct()
+public function edit(Product $product): View
 {
-    $this->middleware('auth')->only(['create', 'store', 'edit', 'update', 'destroy']);
-    
-    // أو
-    $this->middleware('auth')->except(['index', 'show']);
+    return view('products.edit', compact('product'));
 }
 ```
+
+### لماذا الأفضل؟
+
+- أوضح
+- أقصر
+- Laravel تعمل `404` تلقائيًا لو السجل غير موجود
 
 ---
 
-### 5️⃣ Authorization (التحقق من الصلاحيات)
+# الجزء الثامن: Responses داخل Controllers
 
-```php
-public function edit(Product $product)
-{
-    // تأكد إن المستخدم يقدر يعدّل
-    $this->authorize('update', $product);
-    
-    $categories = Category::all();
-    return view('products.edit', compact('product', 'categories'));
-}
-
-public function destroy(Product $product)
-{
-    $this->authorize('delete', $product);
-    
-    $product->delete();
-    
-    return redirect()->route('products.index')
-                     ->with('success', 'تم الحذف!');
-}
-```
-
----
-
-## 🔄 أنماط الـ Response
-
-### 1️⃣ View Response
+## 1. View Response
 
 ```php
 return view('products.index', compact('products'));
@@ -837,300 +1037,287 @@ return view('products.index', compact('products'));
 
 ---
 
-### 2️⃣ Redirect Response
+## 2. Redirect Response
 
 ```php
-// بسيط
-return redirect('/products');
-
-// مع Route name
 return redirect()->route('products.index');
+```
 
-// مع رسالة
-return redirect()->route('products.index')
-                 ->with('success', 'تمت العملية!');
+مع رسالة:
 
-// مع أخطاء
-return redirect()->back()->withErrors(['name' => 'الاسم مطلوب']);
-
-// مع البيانات القديمة
-return redirect()->back()->withInput();
+```php
+return redirect()
+    ->route('products.index')
+    ->with('success', 'تمت العملية بنجاح');
 ```
 
 ---
 
-### 3️⃣ JSON Response
+## 3. JSON Response
 
 ```php
 return response()->json([
-    'success' => true,
-    'data' => $products
+    'status' => true,
+    'data' => $products,
 ]);
-
-// مع Status Code
-return response()->json([
-    'success' => false,
-    'message' => 'المنتج غير موجود'
-], 404);
 ```
 
 ---
 
-### 4️⃣ Download Response
+## 4. Download / File Response
 
 ```php
-return response()->download($pathToFile);
-
-// مع اسم مخصص
-return response()->download($pathToFile, 'filename.pdf');
+return response()->download($path);
 ```
 
----
-
-### 5️⃣ File Response
+أو:
 
 ```php
-return response()->file($pathToFile);
+return response()->file($path);
 ```
 
 ---
 
-## 🎯 تنظيم الـ Controllers
+# الجزء التاسع: API Controller بشكل نظيف
 
-### البنية الموصى بها:
+مثال مبسط:
 
-```
-app/Http/Controllers/
-├── Admin/
-│   ├── ProductController.php
-│   └── UserController.php
-├── Api/
-│   ├── V1/
-│   │   └── ProductController.php
-│   └── V2/
-│       └── ProductController.php
-├── Auth/
-│   ├── LoginController.php
-│   └── RegisterController.php
-└── ProductController.php
+```php
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreProductRequest;
+use App\Models\Product;
+use Illuminate\Http\JsonResponse;
+
+class ProductController extends Controller
+{
+    public function index(): JsonResponse
+    {
+        $products = Product::query()
+            ->latest()
+            ->paginate(15);
+
+        return response()->json([
+            'status' => true,
+            'data' => $products,
+        ]);
+    }
+
+    public function store(StoreProductRequest $request): JsonResponse
+    {
+        $product = Product::create($request->validated());
+
+        return response()->json([
+            'status' => true,
+            'message' => 'تمت إضافة المنتج بنجاح',
+            'data' => $product,
+        ], 201);
+    }
+}
 ```
 
 ---
 
-### Controller في مجلد فرعي:
+# الجزء العاشر: تنظيم الملفات
+
+## Controller عادي
+
+```text
+app/Http/Controllers/ProductController.php
+```
+
+## داخل مجلد فرعي
+
+```text
+app/Http/Controllers/Admin/ProductController.php
+app/Http/Controllers/Api/ProductController.php
+```
+
+### إنشاء Controller داخل مجلد
 
 ```bash
 php artisan make:controller Admin/ProductController --resource
 ```
 
-```php
-namespace App\Http\Controllers\Admin;
+---
 
-class ProductController extends Controller
-{
-    // ...
-}
+## تنظيم مقترح
+
+```text
+app/Http/Controllers/
+├── Admin/
+├── Api/
+├── Auth/
+└── ProductController.php
 ```
 
-**في الـ Routes:**
-```php
-Route::namespace('Admin')->group(function () {
-    Route::resource('products', ProductController::class);
-});
-```
+لو المشروع بسيط لا تعقد التنظيم.
+لكن لو فيه لوحات متعددة أو API، التنظيم بالمجلدات مهم.
 
 ---
 
-## 💡 أفضل الممارسات
+# الجزء الحادي عشر: أخطاء شائعة
 
-### 1️⃣ Keep Controllers Thin
+## 1. `Target class does not exist`
 
-**❌ سيء - Controller سمين:**
-```php
-public function store(Request $request)
-{
-    $request->validate([...]);
-    
-    $product = new Product();
-    $product->name = $request->name;
-    $product->price = $request->price;
-    
-    if ($request->hasFile('image')) {
-        $image = $request->file('image');
-        $imageName = time() . '.' . $image->extension();
-        $image->move(public_path('images'), $imageName);
-        $product->image = $imageName;
-    }
-    
-    $product->save();
-    
-    // إرسال إيميل
-    Mail::to('admin@example.com')->send(...);
-    
-    // تسجيل في Log
-    Log::info('Product created: ' . $product->id);
-    
-    return redirect()->route('products.index');
-}
-```
+السبب غالبًا:
 
-**✅ جيد - Controller نحيف:**
-```php
-public function store(StoreProductRequest $request, ProductService $service)
-{
-    $product = $service->createProduct($request->validated());
-    
-    return redirect()->route('products.index')
-                     ->with('success', 'تم الإضافة!');
-}
-```
+- نسيت import للـ controller في routes
+- namespace غلط
+- اسم الملف أو الكلاس غير مطابق
 
----
+### الحل
 
-### 2️⃣ استخدم Form Requests
-
-**بدل:**
-```php
-public function store(Request $request)
-{
-    $request->validate([...]);
-    // ...
-}
-```
-
-**استخدم:**
-```php
-public function store(StoreProductRequest $request)
-{
-    // التحقق تم تلقائياً!
-    // ...
-}
-```
-
----
-
-### 3️⃣ استخدم Services للمنطق المعقد
-
-```php
-// app/Services/ProductService.php
-class ProductService
-{
-    public function createProduct(array $data)
-    {
-        // منطق معقد هنا
-        $product = Product::create($data);
-        
-        event(new ProductCreated($product));
-        
-        return $product;
-    }
-}
-```
-
----
-
-### 4️⃣ استخدم Resource Collections للـ API
-
-```bash
-php artisan make:resource ProductResource
-```
-
-```php
-class ProductResource extends JsonResource
-{
-    public function toArray($request)
-    {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'price' => $this->price_formatted,
-            'category' => $this->category->name
-        ];
-    }
-}
-```
-
-**في الـ Controller:**
-```php
-public function index()
-{
-    $products = Product::paginate(15);
-    return ProductResource::collection($products);
-}
-```
-
----
-
-## 🐛 أخطاء شائعة وحلولها
-
-### الخطأ 1: "Target class does not exist"
-
-**السبب:** مش مستورد الـ Controller في الـ Routes
-
-**الحل:**
 ```php
 use App\Http\Controllers\ProductController;
-
-Route::resource('products', ProductController::class);
 ```
 
 ---
 
-### الخطأ 2: "Too few arguments"
+## 2. `Too few arguments`
 
-**السبب:** نسيت تمرر parameter للدالة
+السبب:
 
-**الحل:**
+- method تتوقع parameter
+- والـ route لا ترسلها
+
+مثال غلط:
+
 ```php
-// ✅ صح
-public function show(Product $product)
-
-// ❌ غلط
-public function show()
+public function show(Product $product, string $status)
+{
+    //
+}
 ```
+
+بدون route توفر `status`.
 
 ---
 
-### الخطأ 3: "Call to undefined method"
+## 3. `Call to undefined method`
 
-**السبب:** اسم الدالة غلط في الـ Route
+السبب:
 
-**الحل:**
+- route تشير إلى method غير موجودة
+
+مثال:
+
 ```php
-Route::get('/products', [ProductController::class, 'index']); // تأكد من الاسم
+Route::get('/products', [ProductController::class, 'listing']);
 ```
+
+بينما الكلاس فيه `index` فقط.
 
 ---
 
-## 📊 ملخص سريع
+## 4. Controller متضخم جدًا
 
-**الـ Controller هو:**
-- ✅ المدير اللي بينظم كل حاجة
-- ✅ بيستقبل الطلب من المستخدم
-- ✅ بيتعامل مع الـ Model
-- ✅ بيرجع Response
+أشهر مشكلة في المشاريع المتوسطة.
 
-**الدوال الـ 7:**
+### الحل
+
+- Form Requests
+- Services
+- Policies
+- Actions
+
+---
+
+# الجزء الثاني عشر: متى أستخدم Service؟
+
+لو method الـ controller فيها:
+
+- أكثر من 20-30 سطر منطق فعلي
+- دمج أكثر من model
+- شغل ملفات
+- إرسال notifications
+- شغل inventory أو payment
+
+فغالبًا هذا ليس مكانها.
+
+مثال:
+
 ```php
-index()    → عرض القائمة
-create()   → صفحة الإضافة
-store()    → حفظ جديد
-show()     → عرض واحد
-edit()     → صفحة التعديل
-update()   → حفظ التعديل
-destroy()  → حذف
-```
+public function store(StoreOrderRequest $request, OrderService $orderService): RedirectResponse
+{
+    $order = $orderService->create($request->validated(), $request->user());
 
-**أفضل الممارسات:**
-- ✅ Controller نحيف
-- ✅ استخدم Form Requests
-- ✅ استخدم Services
-- ✅ استخدم Route Model Binding
+    return redirect()
+        ->route('orders.show', $order)
+        ->with('success', 'تم إنشاء الطلب بنجاح');
+}
+```
 
 ---
 
-**مبروك! 🎉 دلوقتي فاهم الـ Controllers!**
+# الجزء الثالث عشر: مثال View Controller و API Controller
 
-صُنع بحب ❤️ لكل مطور لارافيل
+## Web Controller
+
+يركز على:
+
+- views
+- redirects
+- flash messages
+
+## API Controller
+
+يركز على:
+
+- JSON
+- status codes
+- resources
+- pagination payloads
+
+لا تكتب API controller وكأنه web controller.
+
+---
+
+# الجزء الرابع عشر: ملخص عملي
+
+## Controller جيد يعني:
+
+- واضح
+- قصير نسبيًا
+- مسؤول عن التنسيق فقط
+- لا يحمل business logic ضخمة
+- يعتمد على Form Requests
+- يستخدم Route Model Binding
+- يرجع response مناسبة
+
+---
+
+## الدوال الأساسية
+
+```php
+index()   // list
+create()  // show create form
+store()   // save new record
+show()    // show one record
+edit()    // show edit form
+update()  // save changes
+destroy() // delete
+```
+
+---
+
+## الجملة الذهبية
+
+لو عايز تحفظ الدرس كله في سطر واحد:
+
+> الـ Controller هو منسق الطلب داخل Laravel: يستقبل الـ request، يستدعي المنطق المناسب، ثم يرجع response صحيحة، من غير ما يتحول إلى مكان لكل شيء في التطبيق.
+
+---
+
+## الخطوة التالية
+
+بعد ما تفهم Controllers بشكل صحيح، الدرس الطبيعي التالي هو:
+
+## `08-laravel-migration-deep-guide.md`
+
+لأنك بعد ما فهمت طبقة HTTP وMVC، لازم تدخل الآن على بناء قاعدة البيانات بشكل صحيح ومنظم.
 
 </div>
