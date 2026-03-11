@@ -580,12 +580,15 @@
 1. `laravel-setup-guide.md`
 2. `laravel-env-guide.md`
 3. `شرح_MVC.md`
-4. `laravel-controllers-guide.md`
-5. `laravel-migration-deep-guide.md`
-6. `laravel-models-guide.md`
-7. `laravel-relationships-guide.md`
-8. `(Advanced) laravel-crud-blog-guide.md`
-9. ثم الانتقال التدريجي إلى ملفات `docs-12.x` حسب الرودماب أعلاه
+4. `laravel-routing-guide.md`
+5. `laravel-requests-validation-responses-guide.md`
+6. `laravel-views-blade-guide.md`
+7. `laravel-controllers-guide.md`
+8. `laravel-migration-deep-guide.md`
+9. `laravel-models-guide.md`
+10. `laravel-relationships-guide.md`
+11. `(Advanced) laravel-crud-blog-guide.md`
+12. ثم الانتقال التدريجي إلى ملفات `docs-12.x` حسب الرودماب أعلاه
 
 ---
 
