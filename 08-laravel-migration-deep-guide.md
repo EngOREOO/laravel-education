@@ -1,146 +1,263 @@
 <div dir="rtl">
 
-# 🏗️ شرح Migration في لارافيل - من الصفر للاحتراف
+# شرح Migrations في Laravel
 
-### فهم كامل لـ Migration بأسلوب بسيط وعملي
-
----
-
-## 🤔 يعني إيه Migration؟
-
-تخيل معايا السيناريو ده:
-
-**بدون Migration:**
-- إنت عامل جدول في الداتابيز على جهازك
-- زميلك محمد عايز يشتغل على نفس المشروع
-- هيروح يعمل نفس الجدول يدوياً في phpMyAdmin
-- بعدين إنت عدلت الجدول وضفت عمود جديد
-- محمد مش هيعرف! والداتابيز بتاعته هتبقى مختلفة عنك 😱
-
-**مع Migration:**
-- إنت بتكتب "وصفة" في كود
-- محمد ينزل الكود ويعمل أمر واحد بس
-- الداتابيز بتاعته تبقى نسخة طبق الأصل من بتاعتك! ✨
+### محاضرة تفصيلية جدًا من الصفر مع أمثلة كثيرة و Best Practices و Clean Schema Design
 
 ---
 
-## 📚 التشبيه الكامل
+## قبل ما نبدأ
 
-**Migration زي "كتاب وصفات الطبخ" للداتابيز:**
+الدرس ده من أهم دروس Laravel كلها.
 
-```
-كتاب الطبخ                    Migration
-────────────────────────────────────────────
-📖 الوصفة                  →  ملف الـ Migration
-👨‍🍳 الطباخ                 →  لارافيل
-🍲 الأكلة                   →  الجدول في الداتابيز
-📝 المقادير                →  الأعمدة (Columns)
-⏮️ إلغاء الوصفة            →  دالة down()
-```
+ليه؟
 
-لما تدي الكتاب لأي حد، يقدر يعمل نفس الأكلة بالظبط!
+لأن أي تطبيق حقيقي تقريبًا فيه:
 
----
+- users
+- products
+- posts
+- orders
+- comments
+- categories
 
-## 🎯 ليه نستخدم Migration؟
+وكل دول محتاجين جداول في قاعدة البيانات.
 
-### ✅ المميزات:
+السؤال هنا:
 
-**1. التحكم في الإصدارات (Version Control)**
-```
-زي Git للكود، Migration هو Git للداتابيز!
-```
+> إزاي نبني الجداول دي بشكل صحيح ومنظم وآمن وقابل للتطوير؟
 
-**2. سهولة المشاركة مع الفريق**
-```
-كل الفريق يقدر يعمل نفس الداتابيز بأمر واحد
-```
+الإجابة:
 
-**3. التراجع عن التغييرات**
-```
-غلطت؟ ارجع بسهولة!
-```
-
-**4. توثيق تلقائي**
-```
-كل تغيير متسجل في ملف واضح
-```
-
-**5. بيئات متعددة**
-```
-نفس البنية في Development, Testing, Production
-```
+## Migrations
 
 ---
 
-## 🛠️ إنشاء أول Migration
+## السؤال الأول: يعني إيه Migration أصلًا؟
 
-### الأمر الأساسي:
+الـ Migration هي ملف كود يصف تغييرًا في قاعدة البيانات.
+
+بمعنى أبسط:
+
+> بدل ما تفتح phpMyAdmin أو أي أداة وتعمل الجداول يدويًا، أنت تكتب التغييرات في كود، وLaravel تنفذها لك.
+
+يعني كأنك تقول لـ Laravel:
+
+- اعمل جدول users
+- حط فيه الأعمدة دي
+- اربط الجدول ده بجدول تاني
+- ولو احتجنا نرجع، امسح التغيير ده
+
+---
+
+## السؤال الثاني: ليه نستخدم Migrations؟
+
+تخيل السيناريو ده:
+
+أنت عملت جدول `products` يدويًا على جهازك.
+زميلك في الفريق نزل المشروع.
+
+كيف سيعرف:
+
+- اسم الجدول
+- الأعمدة
+- أنواعها
+- العلاقات
+- القيم الافتراضية
+
+ولو بعد أسبوع أضفت عمود جديد، كيف سيتابعه؟
+
+هنا تظهر أهمية الـ Migrations.
+
+---
+
+## Migrations تحل لك مشاكل مهمة جدًا
+
+### 1. توحيد بنية قاعدة البيانات
+
+كل من يعمل:
 
 ```bash
-php artisan make:migration create_users_table
+php artisan migrate
 ```
 
-**تشريح الأمر:**
-- `php artisan` - بنشغل لارافيل من الترمنال
-- `make:migration` - اعمل ملف Migration جديد
-- `create_users_table` - اسم الـ Migration (لازم يكون وصفي)
+يحصل على نفس الجداول.
 
 ---
 
-### 📝 تسمية الـ Migrations
+### 2. توثيق تاريخ تغييرات قاعدة البيانات
 
-**قواعد مهمة:**
+كل ملف migration يمثل خطوة واضحة:
 
-**✅ لإنشاء جدول جديد:**
+- إنشاء جدول
+- إضافة عمود
+- حذف عمود
+- تعديل بنية
+
+يعني الداتابيز عندك لها "تاريخ" واضح مثل الكود تمامًا.
+
+---
+
+### 3. سهولة التراجع
+
+لو أخطأت:
+
 ```bash
+php artisan migrate:rollback
+```
+
+وترجع خطوة للخلف.
+
+---
+
+### 4. سهولة العمل في الفريق
+
+بدل أن تشرح لكل شخص يدويًا كيف يبني الجداول، يكفي أن تسلمه الكود.
+
+---
+
+### 5. سهولة النشر
+
+في السيرفر:
+
+```bash
+php artisan migrate
+```
+
+فيأخذ نفس البنية المطلوبة.
+
+---
+
+## التشبيه البسيط جدًا
+
+الـ Migration مثل:
+
+> وصفة مكتوبة لبناء أو تعديل قاعدة البيانات
+
+يعني:
+
+- اسم الطبخة = اسم الـ migration
+- خطوات الطبخ = كود الـ migration
+- تنفيذ الطبخة = `php artisan migrate`
+- التراجع = `php artisan migrate:rollback`
+
+---
+
+## السؤال الثالث: ما الفرق بين Migration و Database نفسها؟
+
+مهم جدًا.
+
+### Database
+
+هي المكان الفعلي الذي تُخزَّن فيه البيانات.
+
+### Migration
+
+هي الكود الذي يصف شكل هذه القاعدة.
+
+يعني:
+
+- database = الشيء الحقيقي الموجود
+- migration = التعليمات التي تبني هذا الشيء
+
+---
+
+## السؤال الرابع: هل الـ Migration تخزن البيانات؟
+
+في الأصل:
+
+> لا
+
+الـ migration تهتم بالبنية `schema`:
+
+- tables
+- columns
+- indexes
+- foreign keys
+
+أما البيانات نفسها فعادة نستخدم لها:
+
+- seeders
+- factories
+
+يعني:
+
+- migration = شكل الجدول
+- seeder = تعبئة بيانات
+
+---
+
+# الجزء الأول: إنشاء أول Migration
+
+## الأمر الأساسي
+
+```bash
+php artisan make:migration create_products_table
+```
+
+### ماذا يفعل هذا الأمر؟
+
+Laravel تنشئ ملفًا جديدًا داخل:
+
+```text
+database/migrations
+```
+
+مثلًا:
+
+```text
+database/migrations/2026_03_11_120000_create_products_table.php
+```
+
+---
+
+## السؤال: لماذا اسم الملف طويل هكذا؟
+
+لأن الاسم يتكون من:
+
+- التاريخ
+- الوقت
+- اسم الـ migration
+
+والسبب:
+
+> Laravel تنفذ الـ migrations بالترتيب الزمني
+
+---
+
+## السؤال: لماذا نسميها `create_products_table`؟
+
+لأن الاسم يجب أن يكون وصفيًا.
+
+### أسماء جيدة
+
+```text
 create_products_table
 create_orders_table
-create_categories_table
-```
-
-**✅ لتعديل جدول موجود:**
-```bash
 add_phone_to_users_table
 add_status_to_orders_table
-remove_old_column_from_products_table
+remove_old_price_from_products_table
 ```
 
-**✅ أمثلة عملية:**
-```bash
-# إنشاء جدول منتجات
-php artisan make:migration create_products_table
+### أسماء سيئة
 
-# إضافة عمود الصورة لجدول المنتجات
-php artisan make:migration add_image_to_products_table
-
-# حذف عمود السعر القديم
-php artisan make:migration remove_old_price_from_products_table
+```text
+update_table
+new_change
+fix_data
+test_migration
 ```
+
+الاسم الجيد يجب أن يشرح:
+
+- ماذا تغير؟
+- وفي أي جدول؟
 
 ---
 
-## 📂 فين الملف؟
+# الجزء الثاني: شكل ملف الـ Migration
 
-بعد ما تعمل Migration، هتلاقيه في:
-
-```
-database/migrations/2024_12_02_120000_create_products_table.php
-```
-
-**شرح اسم الملف:**
-- `2024_12_02` - التاريخ
-- `120000` - الوقت (12:00:00)
-- `create_products_table` - الاسم اللي انت كتبته
-
-**ليه التاريخ والوقت؟**
-عشان لارافيل ينفذ الـ Migrations بالترتيب الصحيح!
-
----
-
-## 🔍 داخل ملف الـ Migration
-
-### البنية الأساسية:
+## مثال كامل
 
 ```php
 <?php
@@ -151,23 +268,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     * دالة تنفيذ التغييرات
-     */
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            // هنا بنحدد الأعمدة
             $table->id();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     * دالة التراجع عن التغييرات
-     */
     public function down(): void
     {
         Schema::dropIfExists('products');
@@ -177,443 +285,579 @@ return new class extends Migration
 
 ---
 
-### 🎭 الدالتين الأساسيتين:
+## تعال نشرح السطور واحدة واحدة
 
-**1. دالة `up()`** - تنفيذ التغيير ⬆️
-```php
-// لما تعمل: php artisan migrate
-// بتشتغل دالة up() وتنفذ التغييرات
+### `use Illuminate\Database\Migrations\Migration;`
+
+دي الكلاس الأساسية للـ migrations.
+
+---
+
+### `use Illuminate\Database\Schema\Blueprint;`
+
+دي الكلاس التي نستخدمها لتعريف الأعمدة داخل الجدول.
+
+---
+
+### `use Illuminate\Support\Facades\Schema;`
+
+دي الـ facade التي نستخدمها لإنشاء الجداول أو تعديلها.
+
+---
+
+### `return new class extends Migration`
+
+ده anonymous class.
+
+Laravel الحديثة تستخدم هذا الشكل بدل class مسماة غالبًا.
+
+---
+
+## أهم دالتين في أي Migration
+
+### `up()`
+
+دي الدالة التي تنفذ التغيير.
+
+يعني لو عملت:
+
+```bash
+php artisan migrate
 ```
 
-**2. دالة `down()`** - التراجع عن التغيير ⬇️
-```php
-// لما تعمل: php artisan migrate:rollback
-// بتشتغل دالة down() وترجع التغييرات
+Laravel تنفذ `up()`.
+
+---
+
+### `down()`
+
+دي دالة التراجع.
+
+يعني لو عملت:
+
+```bash
+php artisan migrate:rollback
 ```
 
-**مثال توضيحي:**
-```php
-// up: اعمل الجدول
-Schema::create('products', ...);
+Laravel تنفذ `down()`.
 
-// down: امسح الجدول
-Schema::dropIfExists('products');
+---
+
+## القاعدة الذهبية
+
+> `up()` تبني التغيير
+> و `down()` ترجع التغيير
+
+مثال:
+
+```php
+public function up(): void
+{
+    Schema::create('products', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->timestamps();
+    });
+}
+
+public function down(): void
+{
+    Schema::dropIfExists('products');
+}
 ```
 
 ---
 
-## 📊 أنواع الأعمدة (Column Types)
+# الجزء الثالث: إنشاء جدول من الصفر
 
-### 1️⃣ الأعمدة الأساسية
+## مثال عملي
 
-#### `id()` - المفتاح الأساسي
 ```php
-$table->id();
+public function up(): void
+{
+    Schema::create('products', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->text('description');
+        $table->decimal('price', 10, 2);
+        $table->integer('quantity')->default(0);
+        $table->boolean('is_active')->default(true);
+        $table->timestamps();
+    });
+}
 ```
-**النتيجة:** عمود `id` من نوع BIGINT بيزيد تلقائياً (1, 2, 3...)
-
-**استخدامه:** 
-- رقم فريد لكل صف
-- مفتاح أساسي للجدول
 
 ---
 
-#### `string()` - نص قصير
-```php
-$table->string('name');           // طول افتراضي 255
-$table->string('phone', 15);      // طول محدد 15 حرف
+## السؤال: ماذا يعني كل سطر؟
+
+### `$table->id();`
+
+ينشئ عمود:
+
+```text
+id
 ```
-**النتيجة:** عمود VARCHAR
 
-**استخدامه:**
-- الأسماء
-- البريد الإلكتروني
-- أرقام الهواتف
-- العناوين القصيرة
+ويكون:
 
-**أمثلة:**
+- primary key
+- auto increment
+
+يعني Laravel تزيده تلقائيًا:
+
+1, 2, 3, 4...
+
+---
+
+### `$table->string('name');`
+
+عمود نص قصير.
+
+غالبًا يستخدم في:
+
+- name
+- title
+- email
+- phone
+- slug
+
+الطول الافتراضي عادة 255.
+
+---
+
+### `$table->text('description');`
+
+عمود نص أطول من `string`.
+
+يستخدم للوصف أو المحتوى الطويل.
+
+---
+
+### `$table->decimal('price', 10, 2);`
+
+ممتاز للأسعار.
+
+معناه:
+
+- 10 = إجمالي عدد الأرقام
+- 2 = عدد الأرقام بعد العلامة العشرية
+
+مثال:
+
+```text
+99999999.99
+```
+
+---
+
+### `$table->integer('quantity')->default(0);`
+
+عدد صحيح، وقيمته الافتراضية 0.
+
+يعني لو لم ترسل قيمة، تكون:
+
+```text
+0
+```
+
+---
+
+### `$table->boolean('is_active')->default(true);`
+
+قيمة نعم/لا.
+
+مفيدة في:
+
+- active / inactive
+- published / unpublished
+- featured / not featured
+
+---
+
+### `$table->timestamps();`
+
+ينشئ:
+
+- `created_at`
+- `updated_at`
+
+Laravel تتعامل معهما تلقائيًا في Eloquent.
+
+---
+
+# الجزء الرابع: أشهر أنواع الأعمدة
+
+## 1. `string()`
+
 ```php
-$table->string('first_name');
+$table->string('name');
 $table->string('email');
 $table->string('phone', 20);
-$table->string('username', 50);
 ```
+
+### تستخدم في
+
+- أسماء
+- عناوين قصيرة
+- إيميلات
+- سلاجز
+- أرقام تليفون
 
 ---
 
-#### `text()` - نص طويل
+## 2. `text()`
+
 ```php
 $table->text('description');
 ```
-**النتيجة:** عمود TEXT (حتى 65,535 حرف)
 
-**استخدامه:**
-- المقالات
-- الوصف التفصيلي
-- المحتوى الطويل
+### تستخدم في
 
-**أنواع Text:**
+- وصف طويل
+- مقالات
+- ملاحظات
+
+أنواعها:
+
 ```php
-$table->text('content');            // نص عادي
-$table->mediumText('article');      // نص متوسط (16 مليون حرف)
-$table->longText('book');           // نص كبير جداً (4 مليار حرف)
+$table->text('content');
+$table->mediumText('article');
+$table->longText('book_content');
 ```
 
 ---
 
-#### `integer()` - أرقام صحيحة
+## 3. `integer()`
+
 ```php
 $table->integer('views');
-$table->integer('age');
+$table->integer('quantity');
 ```
-**النتيجة:** عمود INT
 
-**استخدامه:**
-- الأعمار
+### تستخدم في
+
 - عدد المشاهدات
-- الكميات
+- كمية
+- عمر
+- ترتيب
 
-**أنواع Integer:**
+أنواع مرتبطة بها:
+
 ```php
-$table->tinyInteger('age');         // -128 إلى 127
-$table->smallInteger('quantity');   // -32,768 إلى 32,767
-$table->integer('views');           // -2 مليار إلى 2 مليار
-$table->bigInteger('population');   // أرقام ضخمة جداً
+$table->tinyInteger('age');
+$table->smallInteger('rank');
+$table->integer('views');
+$table->bigInteger('population');
 ```
 
 ---
 
-#### `decimal()` - أرقام عشرية
-```php
-$table->decimal('price', 8, 2);
-```
-**الشرح:**
-- `8` - إجمالي الأرقام
-- `2` - الأرقام بعد العلامة العشرية
+## 4. `decimal()`
 
-**أمثلة:**
 ```php
-$table->decimal('price', 8, 2);      // 999999.99
-$table->decimal('rating', 3, 2);     // 5.00
-$table->decimal('salary', 10, 2);    // 99999999.99
+$table->decimal('price', 10, 2);
+$table->decimal('salary', 12, 2);
+$table->decimal('rating', 3, 2);
 ```
 
-**استخدامه:**
+### تستخدم في
+
 - الأسعار
 - الرواتب
-- النسب المئوية
+- النسب
 - التقييمات
 
+### السؤال المتوقع
+
+ليه ما نستخدمش `float` للأسعار؟
+
+لأن `decimal` أدق في القيم المالية.
+
+وده `best practice` مهم جدًا.
+
 ---
 
-#### `boolean()` - صح أو غلط
+## 5. `boolean()`
+
 ```php
 $table->boolean('is_active');
-$table->boolean('is_verified');
-```
-**النتيجة:** القيم: `0` (false) أو `1` (true)
-
-**أمثلة:**
-```php
-$table->boolean('is_active')->default(true);
-$table->boolean('is_admin')->default(false);
-$table->boolean('email_verified');
-$table->boolean('is_published');
+$table->boolean('is_featured')->default(false);
 ```
 
 ---
 
-#### `date()` و `time()` و `datetime()`
+## 6. `date()`, `time()`, `dateTime()`, `timestamp()`
+
 ```php
-$table->date('birth_date');          // 2024-12-02
-$table->time('start_time');          // 14:30:00
-$table->datetime('published_at');    // 2024-12-02 14:30:00
+$table->date('birth_date');
+$table->time('start_time');
+$table->dateTime('published_at');
+$table->timestamp('email_verified_at')->nullable();
 ```
 
-**استخدامه:**
-```php
-$table->date('hire_date');           // تاريخ التوظيف
-$table->time('working_hours');       // ساعات العمل
-$table->datetime('order_date');      // تاريخ ووقت الطلب
-```
+### تستخدم في
+
+- التواريخ
+- المواعيد
+- لحظة النشر
+- لحظة التحقق
 
 ---
 
-#### `timestamps()` - أعمدة التوقيت
-```php
-$table->timestamps();
-```
-**النتيجة:** بيعمل عمودين:
-- `created_at` - وقت الإنشاء
-- `updated_at` - وقت آخر تحديث
+## 7. `json()`
 
-**لارافيل بيحدثهم تلقائياً!** ✨
+```php
+$table->json('settings')->nullable();
+```
+
+### تستخدم في
+
+- إعدادات مرنة
+- metadata
+- بيانات لا تحتاج جدولًا منفصلًا
+
+لكن لا تسيء استخدامها.
+
+لو البيانات علاقة مستقلة وواضحة، فغالبًا الأفضل جدول منفصل.
 
 ---
 
-### 2️⃣ أعمدة خاصة
+## 8. `enum()`
 
-#### `email()` - البريد الإلكتروني
 ```php
-$table->string('email')->unique();
+$table->enum('status', ['draft', 'published', 'archived']);
 ```
 
-#### `json()` - بيانات JSON
-```php
-$table->json('settings');
-$table->json('metadata');
-```
+### تستخدم في
 
-#### `enum()` - قائمة محددة
-```php
-$table->enum('status', ['pending', 'approved', 'rejected']);
-$table->enum('role', ['admin', 'user', 'guest']);
-```
+- status
+- role
+- payment_status
+
+### تنبيه مهم
+
+`enum` مفيدة، لكن لو الحالات كثيرة أو تتغير كثيرًا، أحيانًا `string` + constants أو table منفصل يكون أريح.
 
 ---
 
-### 3️⃣ العلاقات بين الجداول
+# الجزء الخامس: Modifiers
 
-#### `foreignId()` - مفتاح أجنبي حديث
-```php
-$table->foreignId('user_id')
-      ->constrained()
-      ->onDelete('cascade');
-```
+## `nullable()`
 
-**شرح:**
-- `foreignId('user_id')` - عمود للربط مع جدول users
-- `constrained()` - ربط تلقائي مع جدول users
-- `onDelete('cascade')` - لما اليوزر يتمسح، كل بياناته تتمسح
-
-**أمثلة:**
-```php
-// ربط المنتجات بالفئات
-$table->foreignId('category_id')
-      ->constrained()
-      ->onDelete('cascade');
-
-// ربط الطلبات بالمستخدمين
-$table->foreignId('user_id')
-      ->constrained()
-      ->onDelete('cascade');
-
-// ربط التعليقات بالمقالات
-$table->foreignId('post_id')
-      ->constrained()
-      ->onDelete('cascade');
-```
-
----
-
-## 🎨 Modifiers - تعديل خصائص الأعمدة
-
-### `nullable()` - يسمح بالقيمة الفارغة
 ```php
 $table->string('phone')->nullable();
 ```
-**بدون nullable:** الحقل إجباري  
-**مع nullable:** الحقل اختياري
+
+يعني الحقل اختياري.
+
+### السؤال المهم
+
+ما الفرق بين:
+
+- nullable
+- default
+
+`nullable` يعني:
+القيمة ممكن تكون `null`.
+
+`default` يعني:
+لو لم ترسل قيمة، ضع قيمة افتراضية.
 
 ---
 
-### `default()` - قيمة افتراضية
+## `default()`
+
 ```php
-$table->integer('views')->default(0);
 $table->boolean('is_active')->default(true);
-$table->string('status')->default('pending');
+$table->integer('quantity')->default(0);
 ```
 
 ---
 
-### `unique()` - قيمة فريدة
+## `unique()`
+
 ```php
 $table->string('email')->unique();
-$table->string('username')->unique();
-$table->string('phone')->unique();
+$table->string('slug')->unique();
 ```
-**معناها:** مينفعش يتكرر نفس القيمة مرتين
+
+يعني لا تتكرر القيمة.
 
 ---
 
-### `unsigned()` - أرقام موجبة فقط
+## `unsigned()`
+
 ```php
-$table->integer('age')->unsigned();
 $table->integer('quantity')->unsigned();
 ```
 
+يعني لا يسمح بالأرقام السالبة.
+
+مفيد في:
+
+- quantity
+- stock
+- counters
+
 ---
 
-### `after()` - مكان العمود
+## `after()`
+
 ```php
-$table->string('middle_name')->after('first_name');
+$table->string('phone')->after('email');
 ```
-**معناها:** ضع العمود بعد عمود معين
+
+يحدد موضع العمود بعد عمود معين.
+
+لكن:
+
+> لا تعتمد عليه كمنطق مهم في المشروع
+
+هو غالبًا للتنظيم فقط.
 
 ---
 
-### `comment()` - تعليق توضيحي
+## `comment()`
+
 ```php
 $table->integer('views')->comment('عدد المشاهدات');
 ```
 
----
-
-## 🎯 أمثلة عملية كاملة
-
-### مثال 1: جدول المستخدمين
-
-```php
-Schema::create('users', function (Blueprint $table) {
-    $table->id();
-    $table->string('first_name', 50);
-    $table->string('last_name', 50);
-    $table->string('email')->unique();
-    $table->string('phone', 15)->nullable();
-    $table->string('password');
-    $table->date('birth_date')->nullable();
-    $table->enum('gender', ['male', 'female'])->nullable();
-    $table->boolean('is_active')->default(true);
-    $table->boolean('email_verified')->default(false);
-    $table->timestamp('email_verified_at')->nullable();
-    $table->timestamps();
-});
-```
-
-**شرح:**
-- رقم تعريفي فريد (`id`)
-- الاسم الأول والأخير (إجباري)
-- الإيميل فريد (مينفعش يتكرر)
-- التليفون اختياري
-- الباسورد مشفر
-- تاريخ الميلاد والنوع اختياري
-- حالة النشاط (افتراضياً فعّال)
-- التحقق من الإيميل
-- أوقات الإنشاء والتحديث
+مفيد أحيانًا للتوضيح.
 
 ---
 
-### مثال 2: جدول المنتجات
+# الجزء السادس: العلاقات داخل الـ Migrations
+
+## السؤال: كيف أربط جدولًا بجدول؟
+
+مثال:
+
+- المنتج ينتمي إلى فئة
+- التعليق ينتمي إلى مقال
+- الطلب ينتمي إلى مستخدم
+
+هنا نستخدم:
+
+## `foreignId()`
+
+مثال:
 
 ```php
-Schema::create('products', function (Blueprint $table) {
-    $table->id();
-    $table->string('name');
-    $table->string('slug')->unique();
-    $table->text('description');
-    $table->decimal('price', 10, 2);
-    $table->decimal('discount_price', 10, 2)->nullable();
-    $table->integer('quantity')->unsigned()->default(0);
-    $table->string('sku')->unique();
-    $table->string('image')->nullable();
-    $table->boolean('is_featured')->default(false);
-    $table->enum('status', ['draft', 'published', 'archived'])
-          ->default('draft');
-    $table->foreignId('category_id')
-          ->constrained()
-          ->onDelete('cascade');
-    $table->timestamps();
-});
-```
-
-**شرح:**
-- اسم المنتج والـ slug الفريد
-- وصف تفصيلي
-- السعر والسعر بعد الخصم
-- الكمية المتوفرة
-- كود المنتج (SKU) فريد
-- صورة المنتج (اختياري)
-- هل مميز؟
-- الحالة (مسودة، منشور، مؤرشف)
-- ربط بجدول الفئات
-
----
-
-### مثال 3: جدول الطلبات
-
-```php
-Schema::create('orders', function (Blueprint $table) {
-    $table->id();
-    $table->string('order_number')->unique();
-    $table->foreignId('user_id')
-          ->constrained()
-          ->onDelete('cascade');
-    $table->decimal('subtotal', 10, 2);
-    $table->decimal('tax', 10, 2);
-    $table->decimal('shipping', 10, 2);
-    $table->decimal('total', 10, 2);
-    $table->enum('status', [
-        'pending',
-        'processing', 
-        'shipped',
-        'delivered',
-        'cancelled'
-    ])->default('pending');
-    $table->enum('payment_status', [
-        'unpaid',
-        'paid',
-        'refunded'
-    ])->default('unpaid');
-    $table->string('payment_method')->nullable();
-    $table->text('shipping_address');
-    $table->text('notes')->nullable();
-    $table->timestamp('paid_at')->nullable();
-    $table->timestamp('shipped_at')->nullable();
-    $table->timestamp('delivered_at')->nullable();
-    $table->timestamps();
-});
+$table->foreignId('category_id')
+    ->constrained()
+    ->onDelete('cascade');
 ```
 
 ---
 
-### مثال 4: جدول التعليقات
+## شرح السطر ده
 
-```php
-Schema::create('comments', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('user_id')
-          ->constrained()
-          ->onDelete('cascade');
-    $table->foreignId('post_id')
-          ->constrained()
-          ->onDelete('cascade');
-    $table->text('content');
-    $table->boolean('is_approved')->default(false);
-    $table->integer('likes')->default(0);
-    $table->foreignId('parent_id')
-          ->nullable()
-          ->constrained('comments')
-          ->onDelete('cascade');
-    $table->timestamps();
-});
+### `foreignId('category_id')`
+
+ينشئ عمودًا اسمه:
+
+```text
+category_id
 ```
-
-**شرح:**
-- ربط بالمستخدم والمقال
-- محتوى التعليق
-- حالة الموافقة
-- عدد الإعجابات
-- الـ `parent_id` للردود على التعليقات (تعليقات متداخلة)
 
 ---
 
-## ⚙️ تعديل الجداول الموجودة
+### `constrained()`
 
-### إضافة أعمدة جديدة
+يعني:
+
+اربطه تلقائيًا بالجدول المناسب.
+
+Laravel تفهم أن:
+
+```text
+category_id
+```
+
+ترتبط بجدول:
+
+```text
+categories
+```
+
+---
+
+### `onDelete('cascade')`
+
+يعني:
+
+لو الفئة اتحذفت، المنتجات المرتبطة بها تتحذف أيضًا.
+
+### السؤال المتوقع
+
+هل دائمًا نستخدم `cascade`؟
+
+لا.
+
+على حسب طبيعة البيانات.
+
+أحيانًا نستخدم:
+
+- `cascade`
+- `restrict`
+- `nullOnDelete`
+
+حسب المطلوب.
+
+---
+
+## أمثلة
+
+### ربط المنتج بالفئة
+
+```php
+$table->foreignId('category_id')
+    ->constrained()
+    ->onDelete('cascade');
+```
+
+### ربط المقال بالمستخدم
+
+```php
+$table->foreignId('user_id')
+    ->constrained()
+    ->onDelete('cascade');
+```
+
+### تعليق له parent comment
+
+```php
+$table->foreignId('parent_id')
+    ->nullable()
+    ->constrained('comments')
+    ->onDelete('cascade');
+```
+
+---
+
+# الجزء السابع: تعديل جدول موجود
+
+## إضافة عمود جديد
+
+### أنشئ migration
 
 ```bash
 php artisan make:migration add_phone_to_users_table
 ```
 
+### داخلها
+
 ```php
-public function up()
+public function up(): void
 {
     Schema::table('users', function (Blueprint $table) {
-        $table->string('phone', 15)->nullable()->after('email');
+        $table->string('phone', 20)->nullable()->after('email');
     });
 }
 
-public function down()
+public function down(): void
 {
     Schema::table('users', function (Blueprint $table) {
         $table->dropColumn('phone');
@@ -623,404 +867,484 @@ public function down()
 
 ---
 
-### تعديل عمود موجود
+## تعديل عمود موجود
 
-```bash
-php artisan make:migration modify_price_in_products_table
-```
+مثال:
 
 ```php
-use Illuminate\Database\Schema\Blueprint;
-
-public function up()
-{
-    Schema::table('products', function (Blueprint $table) {
-        $table->decimal('price', 12, 2)->change();
-    });
-}
+Schema::table('products', function (Blueprint $table) {
+    $table->string('name', 300)->change();
+});
 ```
+
+### تنبيه
+
+بعض أنواع التعديلات قد تحتاج دعم إضافي بحسب قاعدة البيانات والإعدادات.
+
+لكن الفكرة الأساسية:
+
+> لا تعدل migration القديمة بعد تنفيذها في مشروع حقيقي
+
+بل اعمل migration جديدة.
 
 ---
 
-### حذف أعمدة
+## حذف عمود
 
 ```php
-public function up()
-{
-    Schema::table('products', function (Blueprint $table) {
-        $table->dropColumn('old_price');
-        // أو حذف أكثر من عمود
-        $table->dropColumn(['old_price', 'old_sku']);
-    });
-}
-```
-
----
-
-### إعادة تسمية عمود
-
-```php
-public function up()
-{
-    Schema::table('products', function (Blueprint $table) {
-        $table->renameColumn('name', 'product_name');
-    });
-}
-```
-
----
-
-## 🎮 أوامر الـ Migration المهمة
-
-### `migrate` - تنفيذ كل الـ Migrations
-
-```bash
-php artisan migrate
-```
-**الاستخدام:** أول مرة أو لما يكون فيه migrations جديدة
-
----
-
-### `migrate:rollback` - التراجع عن آخر Batch
-
-```bash
-php artisan migrate:rollback
-```
-**الاستخدام:** لما تعمل غلطة وعايز ترجع
-
-**مع خطوات محددة:**
-```bash
-php artisan migrate:rollback --step=2
-```
-
----
-
-### `migrate:reset` - التراجع عن كل شيء
-
-```bash
-php artisan migrate:reset
-```
-**تحذير:** بيمسح كل الجداول!
-
----
-
-### `migrate:refresh` - Reset + Migrate
-
-```bash
-php artisan migrate:refresh
-```
-**الاستخدام:** لما عايز تبدأ من الصفر
-
-**مع Seeding:**
-```bash
-php artisan migrate:refresh --seed
-```
-
----
-
-### `migrate:fresh` - مسح كل الجداول + Migrate
-
-```bash
-php artisan migrate:fresh
-```
-**الفرق عن refresh:** بيمسح كل حاجة بما فيها الجداول القديمة
-
-**مع Seeding:**
-```bash
-php artisan migrate:fresh --seed
-```
-
----
-
-### `migrate:status` - حالة الـ Migrations
-
-```bash
-php artisan migrate:status
-```
-**النتيجة:** قائمة بكل الـ migrations (اللي اتنفذت واللي لسه)
-
----
-
-## 🎯 أفضل الممارسات (Best Practices)
-
-### ✅ افعل:
-
-**1. استخدم أسماء واضحة**
-```bash
-✅ create_user_profiles_table
-✅ add_avatar_to_users_table
-❌ new_migration
-❌ fix
-```
-
-**2. اعمل Migration منفصل لكل تغيير**
-```bash
-# أفضل من Migration واحد كبير
-php artisan make:migration add_phone_to_users_table
-php artisan make:migration add_address_to_users_table
-```
-
-**3. دايماً اكتب `down()` صح**
-```php
-public function down()
-{
-    // لازم يعكس اللي عملته في up()
-    Schema::dropIfExists('products');
-}
-```
-
-**4. استخدم `nullable()` للأعمدة الاختيارية**
-```php
-$table->string('middle_name')->nullable();
-```
-
-**5. حدد طول الـ string**
-```php
-✅ $table->string('name', 100);
-❌ $table->string('name');  // 255 طويل أوي أحياناً
-```
-
----
-
-### ❌ لا تفعل:
-
-**1. متعدلش على migration قديم اتنفذ**
-```bash
-# لو عملت migrate، متعدلش في الملف
-# اعمل migration جديد للتعديل
-```
-
-**2. متحذفش migrations من المشروع**
-```bash
-# الـ migrations دي سجل تاريخي مهم
-```
-
-**3. متستخدمش migrations في Production مباشرة**
-```bash
-# جرب الأول في Staging
-```
-
----
-
-## 🐛 حل المشاكل الشائعة
-
-### المشكلة 1: "Table already exists"
-
-**السبب:** الجدول موجود فعلاً
-
-**الحل:**
-```bash
-# امسح الجدول يدوياً من phpMyAdmin
-# أو استخدم:
-php artisan migrate:fresh
-```
-
----
-
-### المشكلة 2: "SQLSTATE[42000]: Syntax error"
-
-**السبب:** خطأ في صيغة SQL
-
-**الحل:**
-- تأكد من كتابة الأعمدة صح
-- تأكد من الـ datatype صحيح
-```php
-✅ $table->string('name');
-❌ $table->varchar('name');  // Laravel مش بيستخدم varchar
-```
-
----
-
-### المشكلة 3: "Nothing to migrate"
-
-**السبب:** كل الـ migrations اتنفذت
-
-**التأكد:**
-```bash
-php artisan migrate:status
-```
-
----
-
-### المشكلة 4: "Foreign key constraint fails"
-
-**السبب:** بتحاول تمسح جدول مرتبط بجدول تاني
-
-**الحل:**
-```php
-// استخدم onDelete
-$table->foreignId('user_id')
-      ->constrained()
-      ->onDelete('cascade');
-```
-
----
-
-### المشكلة 5: "Class not found"
-
-**السبب:** مكتبة doctrine/dbal مش موجودة (للتعديل على أعمدة)
-
-**الحل:**
-```bash
-composer require doctrine/dbal
-```
-
----
-
-## 📊 مثال مشروع كامل
-
-### سيناريو: نظام مكتبة إلكترونية
-
-**1. جدول الكتب:**
-```bash
-php artisan make:migration create_books_table
-```
-
-```php
-Schema::create('books', function (Blueprint $table) {
-    $table->id();
-    $table->string('title');
-    $table->string('isbn')->unique();
-    $table->text('description');
-    $table->string('author');
-    $table->string('publisher');
-    $table->date('published_date');
-    $table->integer('pages')->unsigned();
-    $table->decimal('price', 8, 2);
-    $table->string('cover_image')->nullable();
-    $table->integer('stock')->unsigned()->default(0);
-    $table->boolean('is_available')->default(true);
-    $table->timestamps();
+Schema::table('users', function (Blueprint $table) {
+    $table->dropColumn('phone');
 });
 ```
 
 ---
 
-**2. جدول الفئات:**
-```bash
-php artisan make:migration create_categories_table
+## إعادة تسمية عمود
+
+```php
+Schema::table('users', function (Blueprint $table) {
+    $table->renameColumn('name', 'full_name');
+});
 ```
+
+---
+
+# الجزء الثامن: أوامر الـ Migrations المهمة
+
+## `migrate`
+
+```bash
+php artisan migrate
+```
+
+ينفذ كل الـ migrations غير المنفذة.
+
+---
+
+## `migrate:rollback`
+
+```bash
+php artisan migrate:rollback
+```
+
+يرجع آخر batch.
+
+### السؤال المتوقع
+
+يعني إيه batch؟
+
+يعني مجموعة migrations اتنفذت مع بعض في نفس الدفعة.
+
+---
+
+## `migrate:reset`
+
+```bash
+php artisan migrate:reset
+```
+
+يرجع كل الـ migrations.
+
+---
+
+## `migrate:refresh`
+
+```bash
+php artisan migrate:refresh
+```
+
+يعني:
+
+- rollback لكل شيء
+- ثم migrate من جديد
+
+---
+
+## `migrate:fresh`
+
+```bash
+php artisan migrate:fresh
+```
+
+ده يمسح كل الجداول ثم يعيد بناءها.
+
+### تحذير
+
+ده قوي جدًا.
+
+ممتاز في التطوير.
+لكن خطر لو استخدمته على بيانات مهمة.
+
+---
+
+## `migrate:status`
+
+```bash
+php artisan migrate:status
+```
+
+يعرض:
+
+- أي migrations تنفذت
+- وأيها لم يتنفذ
+
+---
+
+# الجزء التاسع: مثال حقيقي كامل
+
+## جدول users
+
+```php
+Schema::create('users', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->string('email')->unique();
+    $table->string('password');
+    $table->timestamp('email_verified_at')->nullable();
+    $table->rememberToken();
+    $table->timestamps();
+});
+```
+
+### لماذا هذا التصميم جيد؟
+
+- فيه primary key
+- email unique
+- password string
+- email verification nullable
+- timestamps
+
+---
+
+## جدول categories
 
 ```php
 Schema::create('categories', function (Blueprint $table) {
     $table->id();
     $table->string('name');
     $table->string('slug')->unique();
+    $table->timestamps();
+});
+```
+
+---
+
+## جدول products
+
+```php
+Schema::create('products', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->string('slug')->unique();
     $table->text('description')->nullable();
-    $table->timestamps();
-});
-```
-
----
-
-**3. ربط الكتب بالفئات (Many-to-Many):**
-```bash
-php artisan make:migration create_book_category_table
-```
-
-```php
-Schema::create('book_category', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('book_id')
-          ->constrained()
-          ->onDelete('cascade');
+    $table->decimal('price', 10, 2);
+    $table->integer('quantity')->unsigned()->default(0);
+    $table->boolean('is_active')->default(true);
     $table->foreignId('category_id')
-          ->constrained()
-          ->onDelete('cascade');
+        ->constrained()
+        ->onDelete('cascade');
     $table->timestamps();
 });
 ```
 
+### هذا المثال يعلمك:
+
+- إنشاء جدول
+- string
+- text
+- decimal
+- boolean
+- default
+- unsigned
+- foreign key
+- timestamps
+
 ---
 
-**4. جدول الاستعارات:**
+# الجزء العاشر: Best Practices مهمة جدًا
+
+## 1. اجعل كل migration لها غرض واحد واضح
+
+جيد:
+
+```text
+create_products_table
+add_phone_to_users_table
+add_status_to_orders_table
+```
+
+سيء:
+
+```text
+update_everything_table
+misc_changes
+new_fix
+```
+
+---
+
+## 2. لا تعدل migration قديمة بعد أن تُنفذ في مشروع حقيقي
+
+لو migration نُفذت واشتغل بها الفريق أو السيرفر:
+
+> لا ترجع تعدلها غالبًا
+
+بل أنشئ migration جديدة تكمل التغيير.
+
+وده من أهم مبادئ العمل المنظم.
+
+---
+
+## 3. استخدم أسماء جداول واضحة
+
+عادة:
+
+- model مفرد: `Product`
+- table جمع: `products`
+
+---
+
+## 4. استخدم الأعمدة المناسبة
+
+- السعر = `decimal`
+- الحالة = `boolean` أو `enum`
+- النص الطويل = `text`
+- الاسم = `string`
+
+---
+
+## 5. فكر في الـ nullability جيدًا
+
+اسأل نفسك:
+
+- هل الحقل لازم يكون مطلوب دائمًا؟
+- هل الحقل اختياري؟
+- هل يحتاج default بدل nullable؟
+
+---
+
+## 6. ضع قيودًا منطقية
+
+مثل:
+
+- `unique()` للإيميل والـ slug
+- `unsigned()` للكميات
+- `foreignId()` للعلاقات
+
+---
+
+## 7. لا تفرط في `enum`
+
+ممتازة أحيانًا.
+لكن ليست دائمًا الحل الأفضل.
+
+---
+
+## 8. فكر في الحذف جيدًا
+
+هل لو حذفنا المستخدم:
+
+- نحذف طلباته؟
+- نمنع الحذف؟
+- نجعل القيمة null؟
+
+اختيار `onDelete` يجب أن يكون واعيًا.
+
+---
+
+# الجزء الحادي عشر: أخطاء شائعة جدًا
+
+## 1. `Table already exists`
+
+السبب:
+
+- migration تُنشئ جدولًا موجودًا بالفعل
+
+### الحل
+
+- راجع حالة migrations
+- استخدم `migrate:status`
+- أو rollback/fresh في بيئة التطوير لو مناسب
+
+---
+
+## 2. `Nothing to migrate`
+
+السبب:
+
+- كل الـ migrations الحالية تم تنفيذها بالفعل
+
+وده ليس خطأ فعليًا غالبًا.
+
+---
+
+## 3. `SQLSTATE ... syntax error`
+
+السبب:
+
+- خطأ في تعريف migration
+- نوع عمود غير صحيح
+- قوس ناقص
+- سلسلة method chaining غير صحيحة
+
+---
+
+## 4. `Foreign key constraint fails`
+
+السبب غالبًا:
+
+- الجدول المرتبط غير موجود وقت التنفيذ
+- نوع العمود غير متطابق
+- تحاول إدخال قيمة مرتبطة غير موجودة
+
+---
+
+## 5. المشكلة الأشهر: تعديل migration قديمة بعد التنفيذ
+
+في التطوير الفردي الصغير قد تمر.
+لكن في الشغل المنظم ده يسبب فوضى.
+
+---
+
+# الجزء الثاني عشر: أسئلة المبتدئ التي يجب أن تعرفها
+
+## هل أعمل migration قبل model ولا model قبل migration؟
+
+الاثنان ممكن.
+
+لكن عمليًا كثير من الناس يعملون:
+
 ```bash
-php artisan make:migration create_borrowings_table
+php artisan make:model Product -m
 ```
 
-```php
-Schema::create('borrowings', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('user_id')
-          ->constrained()
-          ->onDelete('cascade');
-    $table->foreignId('book_id')
-          ->constrained()
-          ->onDelete('cascade');
-    $table->date('borrowed_at');
-    $table->date('due_date');
-    $table->date('returned_at')->nullable();
-    $table->enum('status', ['active', 'returned', 'overdue'])
-          ->default('active');
-    $table->decimal('fine', 8, 2)->default(0);
-    $table->timestamps();
-});
-```
+فتنشأ model و migration معًا.
 
 ---
 
-**5. تنفيذ كل شيء:**
-```bash
-php artisan migrate
-```
+## هل كل جدول لازم يكون له `id()`؟
+
+غالبًا نعم في أغلب المشاريع.
+
+إلا لو عندك سبب خاص لتصميم مختلف.
 
 ---
 
-## 🎓 تمارين للممارسة
+## هل كل جدول لازم يكون فيه `timestamps()`؟
 
-### تمرين 1: نظام مطعم
-اعمل migrations لـ:
-- جدول الوجبات (meals)
-- جدول الفئات (categories)
-- جدول الطلبات (orders)
-- جدول تفاصيل الطلبات (order_items)
+ليس شرطًا، لكن غالبًا نعم.
 
-### تمرين 2: نظام حجز فنادق
-اعمل migrations لـ:
-- جدول الفنادق (hotels)
-- جدول الغرف (rooms)
-- جدول الحجوزات (bookings)
-- جدول المراجعات (reviews)
+لأنها مفيدة جدًا:
 
-### تمرين 3: منصة تعليمية
-اعمل migrations لـ:
-- جدول الكورسات (courses)
-- جدول الدروس (lessons)
-- جدول التسجيلات (enrollments)
-- جدول التقدم (progress)
+- تعرف متى أُنشئ السجل
+- ومتى عُدّل
 
 ---
 
-## 📚 ملخص سريع
+## هل أستخدم `string` ولا `text`؟
 
-**Migration هو:**
-✅ نظام للتحكم في بنية الداتابيز  
-✅ يسهل العمل الجماعي  
-✅ يوفر نسخ احتياطي للبنية  
-✅ يسمح بالتراجع عن التغييرات  
+لو القيمة قصيرة غالبًا:
 
-**الأوامر المهمة:**
-```bash
-php artisan make:migration create_xxx_table
-php artisan migrate
-php artisan migrate:rollback
-php artisan migrate:fresh
-php artisan migrate:status
-```
+- `string`
 
-**أنواع الأعمدة الأساسية:**
-- `id()` - المفتاح الأساسي
-- `string()` - نص قصير
-- `text()` - نص طويل
-- `integer()` - أرقام صحيحة
-- `decimal()` - أرقام عشرية
-- `boolean()` - صح/غلط
-- `timestamps()` - التواريخ التلقائية
+لو طويلة:
+
+- `text`
 
 ---
 
-**مبروك! 🎉 دلوقتي فاهم الـ Migration كويس جداً!**
+## هل أستخدم `nullable()` ولا `default()`؟
 
-صُنع بحب ❤️ لكل مطور عايز يفهم لارافيل صح
+اسأل نفسك:
+
+- هل غياب القيمة له معنى؟ → `nullable`
+- هل فيه قيمة منطقية تلقائية؟ → `default`
+
+---
+
+## هل migration مسؤولة عن العلاقات في model؟
+
+لا.
+
+migration تعرف:
+
+- foreign keys
+- columns
+
+لكن methods مثل:
+
+- `belongsTo`
+- `hasMany`
+
+تكتب في الـ models.
+
+---
+
+# الجزء الثالث عشر: مثال تدريبي للطلاب
+
+## المطلوب
+
+اعمل قاعدة بيانات بسيطة لمشروع مكتبة.
+
+### الجداول
+
+1. `authors`
+2. `books`
+3. `categories`
+
+### الشروط
+
+- كل كاتب له اسم وبايو اختياري
+- كل كتاب له عنوان ووصف وسعر وحالة نشر
+- كل كتاب ينتمي لكاتب واحد
+- كل كتاب ينتمي لفئة واحدة
+
+### حاول تصمم:
+
+- أسماء الجداول
+- الأعمدة
+- أنواعها
+- العلاقات
+- defaults المناسبة
+
+---
+
+# الجزء الرابع عشر: الملخص النهائي
+
+## الـ Migration هي
+
+ملف كود يصف تغييرًا في قاعدة البيانات.
+
+---
+
+## أهم ما تعلمته
+
+- `make:migration`
+- `up()` و `down()`
+- `Schema::create`
+- `Schema::table`
+- أنواع الأعمدة
+- modifiers
+- foreign keys
+- أوامر migrate / rollback / refresh / fresh
+- best practices في تصميم schema
+
+---
+
+## الجملة الذهبية
+
+لو عايز تلخص الدرس كله في سطر واحد:
+
+> الـ Migrations في Laravel هي الطريقة المنظمة والاحترافية لبناء وتعديل قاعدة البيانات بالكود، بحيث تكون بنية الداتابيز واضحة، قابلة للتتبع، سهلة التنفيذ، وسهلة التراجع.
+
+---
+
+## الخطوة التالية
+
+بعد Migrations، الدرس الطبيعي التالي هو:
+
+## `09-laravel-models-guide.md`
+
+لأنك بعد ما بنيت شكل الجداول، لازم تفهم الكائنات التي ستتعامل مع هذه الجداول داخل Laravel.
 
 </div>
