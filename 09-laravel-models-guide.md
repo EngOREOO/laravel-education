@@ -1,108 +1,190 @@
 <div dir="rtl">
 
-# 🎭 شرح Models في لارافيل - الدليل الشامل
+# شرح Models في Laravel
 
-### فهم الـ Model وعلاقته بالداتابيز من الصفر
+### محاضرة تفصيلية جدًا للمبتدئ عن الـ Model و Eloquent من الصفر حتى الشغل النظيف
 
 ---
 
-## 🤔 يعني إيه Model؟
+## قبل ما نبدأ
 
-**تخيل معايا:**
+إحنا في الدروس السابقة فهمنا:
 
-الداتابيز = مخزن كبير فيه أرفف كتيرة (جداول)  
-كل رف فيه صناديق (صفوف)  
-كل صندوق فيه حاجات (أعمدة)
+- الـ Routing
+- الـ Requests و Validation و Responses
+- الـ Views و Blade
+- الـ Controllers
+- الـ Migrations
 
-**الـ Model = الموظف اللي بيتعامل مع المخزن!**
+دلوقتي وصلنا لجزء مهم جدًا:
 
+## الـ Model
+
+وده الجزء اللي بيتعامل مع البيانات نفسها داخل Laravel.
+
+لو الـ migrations بنت شكل الجداول،
+فالـ models هي الطريقة اللي هنتعامل بيها مع الجداول دي في الكود.
+
+---
+
+## السؤال الأول: يعني إيه Model أصلًا؟
+
+الـ Model هو كلاس يمثل جدولًا في قاعدة البيانات.
+
+يعني مثلًا:
+
+- جدول `users` ↔ Model اسمها `User`
+- جدول `products` ↔ Model اسمها `Product`
+- جدول `posts` ↔ Model اسمها `Post`
+
+بمعنى أبسط:
+
+> الـ Model هي "الواجهة البرمجية" التي تتعامل بها مع الجدول.
+
+يعني بدل ما كل مرة تكتب SQL خام مثل:
+
+```sql
+SELECT * FROM products WHERE id = 1;
 ```
-أنت: "عايز أجيب كل المنتجات"
-Model: "حاضر، هروح للمخزن وأجيبهم"
-Model: يروح للداتابيز، يجيب البيانات، يرجعها لك
 
-أنت: "عايز أضيف منتج جديد"
-Model: "حاضر، هحفظه في المخزن"
-Model: ياخد البيانات، يحفظها في الداتابيز
+في Laravel تكتب:
+
+```php
+$product = Product::find(1);
 ```
 
 ---
 
-## 📚 التشبيه الكامل
+## السؤال الثاني: ما الفرق بين Model والجدول؟
 
-| المفهوم | في الحياة | في لارافيل |
-|---------|-----------|------------|
-| المخزن | الداتابيز | Database |
-| الرف | الجدول | Table |
-| الصندوق | الصف | Row/Record |
-| المحتويات | البيانات | Columns/Data |
-| الموظف | الـ Model | Eloquent Model |
+مهم جدًا.
+
+### الجدول
+
+هو الشيء الحقيقي داخل قاعدة البيانات.
+
+مثال:
+
+```text
+products
+```
+
+فيه أعمدة مثل:
+
+- id
+- name
+- price
+- quantity
 
 ---
 
-## 🏗️ إنشاء Model
+### الـ Model
 
-### الطريقة الأولى: Model فقط
+هو الكلاس داخل Laravel الذي يمثّل هذا الجدول.
+
+مثال:
+
+```php
+class Product extends Model
+{
+    //
+}
+```
+
+إذًا:
+
+- الجدول = البيانات الحقيقية
+- الـ model = الطريقة التي نتعامل بها مع هذه البيانات
+
+---
+
+## السؤال الثالث: لماذا نستخدم Models بدل SQL مباشر؟
+
+لأن Laravel توفر لك:
+
+- كود أوضح
+- قراءة أسهل
+- كتابة أسرع
+- ربط طبيعي مع العلاقات
+- تكامل ممتاز مع بقية الفريم وورك
+
+مثال:
+
+بدل:
+
+```sql
+INSERT INTO products (name, price) VALUES ('Laptop', 15000);
+```
+
+تكتب:
+
+```php
+Product::create([
+    'name' => 'Laptop',
+    'price' => 15000,
+]);
+```
+
+وده أوضح وأسهل على المبتدئ والمحترف معًا.
+
+---
+
+## Eloquent يعني إيه؟
+
+Laravel فيها ORM اسمه:
+
+## Eloquent
+
+وهو النظام الذي يجعل الـ Models تتعامل مع قاعدة البيانات بشكل object-oriented.
+
+بمعنى:
+
+بدل ما تفكر فقط في:
+
+- rows
+- columns
+
+هتبدأ تفكر أيضًا في:
+
+- objects
+- properties
+- relations
+- methods
+
+---
+
+## السؤال الرابع: يعني إيه ORM؟
+
+ORM اختصار:
+
+## Object Relational Mapping
+
+وده معناه ببساطة:
+
+ربط بين:
+
+- الـ objects في الكود
+- والجداول في قاعدة البيانات
+
+فـ `Product` object تمثل سطرًا من جدول `products`.
+
+---
+
+# الجزء الأول: إنشاء Model
+
+## أبسط أمر
 
 ```bash
 php artisan make:model Product
 ```
 
-**النتيجة:**  
-ملف واحد في `app/Models/Product.php`
+ده ينشئ ملفًا هنا:
 
----
-
-### الطريقة الثانية: Model + Migration
-
-```bash
-php artisan make:model Product -m
+```text
+app/Models/Product.php
 ```
 
-**النتيجة:**
-- Model في `app/Models/Product.php`
-- Migration في `database/migrations/xxxx_create_products_table.php`
-
----
-
-### الطريقة الثالثة: كل حاجة مرة واحدة! 🚀
-
-```bash
-php artisan make:model Product -mcr
-```
-
-**الحروف:**
-- `m` = Migration
-- `c` = Controller
-- `r` = Resource Controller
-
-**النتيجة:**
-- ✅ Model
-- ✅ Migration
-- ✅ Controller (مع كل الدوال الجاهزة)
-
----
-
-### الطريقة الرابعة: الشاملة
-
-```bash
-php artisan make:model Product -a
-```
-
-**بيعمل:**
-- Model
-- Migration
-- Controller
-- Factory (لإنشاء بيانات وهمية)
-- Seeder (لملء الداتابيز)
-- Policy (للصلاحيات)
-- FormRequest (للتحقق من البيانات)
-
----
-
-## 📂 بنية الـ Model الأساسية
-
-### Model بسيط:
+وشكله غالبًا يكون:
 
 ```php
 <?php
@@ -113,439 +195,636 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    // هنا هنكتب الإعدادات والعلاقات
+    //
 }
 ```
 
-**ملاحظات:**
-- اسم الـ Model **مفرد** وبحرف كبير: `Product`
-- اسم الجدول **جمع** وصغير: `products`
-- Laravel بيربط بينهم تلقائياً!
+---
+
+## إنشاء Model مع Migration
+
+```bash
+php artisan make:model Product -m
+```
+
+ده يعمل:
+
+- model
+- migration
+
+وده شائع جدًا لأن model والجدول غالبًا يولدان معًا.
 
 ---
 
-## ⚙️ خصائص الـ Model المهمة
+## إنشاء Model + Migration + Controller
 
-### 1️⃣ اسم الجدول `$table`
+```bash
+php artisan make:model Product -mcr
+```
 
-**لو اسم الجدول مختلف:**
+يعني:
+
+- `m` = migration
+- `c` = controller
+- `r` = resource controller
+
+---
+
+## إنشاء كل شيء مرة واحدة
+
+```bash
+php artisan make:model Product -a
+```
+
+ده يعمل عادة:
+
+- model
+- migration
+- controller
+- factory
+- seeder
+- policy
+- requests أحيانًا حسب السياق
+
+---
+
+# الجزء الثاني: أين تعيش الـ Model؟ وما علاقتها بالجدول؟
+
+## مكان الـ Model
+
+غالبًا:
+
+```text
+app/Models/Product.php
+```
+
+---
+
+## اسم الـ Model
+
+يكون غالبًا:
+
+- مفرد
+- PascalCase
+
+مثال:
+
+- `User`
+- `Product`
+- `Order`
+- `Comment`
+
+---
+
+## اسم الجدول
+
+Laravel تتوقع عادة:
+
+- model مفرد
+- table جمع
+
+يعني:
+
+- `Product` ↔ `products`
+- `User` ↔ `users`
+- `Category` ↔ `categories`
+
+---
+
+## السؤال: لو اسم الجدول مختلف؟
+
+تقدر تحدده يدويًا:
 
 ```php
 class Product extends Model
 {
-    // لو الجدول اسمه "items" مش "products"
     protected $table = 'items';
 }
 ```
 
----
+وده معناه:
 
-### 2️⃣ المفتاح الأساسي `$primaryKey`
-
-**لو المفتاح مش "id":**
-
-```php
-class Product extends Model
-{
-    // لو المفتاح اسمه "product_id"
-    protected $primaryKey = 'product_id';
-}
-```
-
-**لو المفتاح مش رقم:**
-
-```php
-class Product extends Model
-{
-    protected $primaryKey = 'uuid';
-    public $incrementing = false;
-    protected $keyType = 'string';
-}
-```
+> الـ Model اسمها Product، لكن تتعامل مع جدول اسمه items
 
 ---
 
-### 3️⃣ الحقول المسموح ملؤها `$fillable`
-
-**للحماية من Mass Assignment:**
+# الجزء الثالث: أبسط شكل للـ Model
 
 ```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
 class Product extends Model
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'price',
-        'quantity',
-        'category_id'
-    ];
+    //
 }
 ```
 
-**معناها:**  
-الحقول دي بس اللي مسموح نحفظها مباشرة
+هذا يكفي كبداية.
 
-**مثال:**
+لكن بعد قليل سنحتاج خصائص مهمة جدًا.
+
+---
+
+# الجزء الرابع: أهم خصائص الـ Model
+
+## 1. `$table`
+
+لو اسم الجدول مختلف عن المتوقع:
+
 ```php
-// ✅ هيشتغل
+protected $table = 'items';
+```
+
+---
+
+## 2. `$primaryKey`
+
+Laravel تتوقع أن المفتاح الأساسي هو:
+
+```text
+id
+```
+
+لو مختلف:
+
+```php
+protected $primaryKey = 'product_id';
+```
+
+---
+
+## 3. `incrementing` و `keyType`
+
+لو المفتاح ليس رقمًا متزايدًا، مثل UUID:
+
+```php
+protected $primaryKey = 'uuid';
+public $incrementing = false;
+protected $keyType = 'string';
+```
+
+---
+
+## 4. `$fillable`
+
+من أهم الحاجات جدًا.
+
+```php
+protected $fillable = [
+    'name',
+    'description',
+    'price',
+    'quantity',
+    'category_id',
+];
+```
+
+### السؤال: يعني إيه fillable؟
+
+يعني:
+
+> الحقول المسموح تعبئتها جماعيًا
+
+مثلًا:
+
+```php
 Product::create([
-    'name' => 'لابتوب',
-    'price' => 15000
-]);
-
-// ❌ مش هيشتغل (لو password مش في fillable)
-Product::create([
-    'name' => 'لابتوب',
-    'admin_password' => 'secret'  // للحماية!
+    'name' => 'Laptop',
+    'price' => 15000,
 ]);
 ```
 
----
+هنا Laravel تحتاج أن تعرف:
 
-### 4️⃣ الحقول المحمية `$guarded`
+هل مسموح للحقلين دول يدخلوا؟
 
-**عكس fillable (كل حاجة مسموحة إلا دي):**
-
-```php
-class Product extends Model
-{
-    // كل الحقول مسموحة إلا دي
-    protected $guarded = ['id', 'admin_only_field'];
-}
-```
-
-**أو تسمح بكل حاجة (مش آمن!):**
-```php
-protected $guarded = [];
-```
+لو ليسا داخل `$fillable`، ستمنع العملية.
 
 ---
 
-### 5️⃣ الحقول المخفية `$hidden`
+## السؤال: لماذا Laravel تمنع هذا أصلًا؟
 
-**حقول متظهرش في JSON:**
+للحماية من مشكلة اسمها:
+
+## Mass Assignment
+
+يعني المستخدم أو الكود يرسل حقولًا لم تكن تقصد السماح بها.
+
+مثال خطير:
 
 ```php
-class User extends Model
-{
-    protected $hidden = [
-        'password',
-        'remember_token',
-        'secret_key'
-    ];
-}
+User::create($request->all());
 ```
 
-**مثال:**
-```php
-$user = User::find(1);
-return $user->toArray();
+ولو الطلب فيه:
 
-// النتيجة (بدون password):
+```php
 [
-    'id' => 1,
-    'name' => 'محمد',
-    'email' => 'mohamed@example.com'
-    // password مش موجود!
+    'name' => 'Ahmed',
+    'email' => 'a@test.com',
+    'is_admin' => true,
 ]
 ```
 
----
+قد يتم حفظ `is_admin` لو لم تكن حذرًا.
 
-### 6️⃣ الحقول الظاهرة `$visible`
-
-**عكس hidden (بس دول اللي يظهروا):**
-
-```php
-class User extends Model
-{
-    protected $visible = ['name', 'email'];
-}
-```
+لذلك `$fillable` مهمة جدًا.
 
 ---
 
-### 7️⃣ التواريخ `$dates` و `$casts`
+## 5. `$guarded`
 
-**تحويل التواريخ تلقائياً:**
+عكس `$fillable`.
+
+مثال:
 
 ```php
-class Product extends Model
-{
-    protected $casts = [
-        'published_at' => 'datetime',
-        'is_active' => 'boolean',
-        'price' => 'decimal:2',
-        'metadata' => 'array'
-    ];
-}
+protected $guarded = ['id'];
 ```
 
-**الاستخدام:**
+يعني:
+
+كل الحقول مسموحة إلا `id`.
+
+### السؤال: أيهما أفضل؟
+
+في كثير من الحالات:
+
+> `$fillable` أوضح وأكثر أمانًا
+
+لأنك تحدد المسموح صراحة.
+
+---
+
+## 6. `$hidden`
+
+لو عندك حقول لا تريد أن تظهر في JSON:
+
 ```php
-$product = Product::find(1);
+protected $hidden = [
+    'password',
+    'remember_token',
+];
+```
 
-// تلقائياً يتحول لـ Carbon date
-echo $product->published_at->format('Y-m-d');
+مفيدة جدًا مع:
 
-// boolean
+- APIs
+- `toArray()`
+- `toJson()`
+
+---
+
+## 7. `$visible`
+
+عكس hidden.
+
+```php
+protected $visible = [
+    'name',
+    'email',
+];
+```
+
+يعني:
+
+لا تظهر إلا هذه الحقول فقط.
+
+---
+
+## 8. `$casts`
+
+مهمة جدًا جدًا.
+
+```php
+protected $casts = [
+    'is_active' => 'boolean',
+    'price' => 'decimal:2',
+    'published_at' => 'datetime',
+    'metadata' => 'array',
+];
+```
+
+### السؤال: لماذا casts مهمة؟
+
+لأن Laravel تحول القيم تلقائيًا لنوع مناسب.
+
+مثال:
+
+```php
 if ($product->is_active) {
-    echo "المنتج نشط";
+    //
 }
-
-// array تلقائياً
-$product->metadata = ['color' => 'red', 'size' => 'large'];
-$product->save();
 ```
+
+لو `is_active` casted إلى boolean، تتعامل معها بشكل طبيعي.
 
 ---
 
-### 8️⃣ تعطيل Timestamps
+## 9. `$timestamps`
 
-**لو مش عايز created_at و updated_at:**
+Laravel تفترض أن الجدول فيه:
+
+- `created_at`
+- `updated_at`
+
+لو جدولك لا يحتوي عليهما:
 
 ```php
-class Product extends Model
-{
-    public $timestamps = false;
-}
+public $timestamps = false;
 ```
+
+لكن غالبًا في أغلب الجداول الحديثة:
+
+> نترك timestamps شغالة
 
 ---
 
-## 🎯 العمليات الأساسية (CRUD)
+# الجزء الخامس: أول تعامل عملي مع الـ Model
 
-### 1️⃣ Create - إنشاء سجل جديد
+## إنشاء سجل جديد
 
-#### الطريقة الأولى: `create()`
+### الطريقة الأولى: `create()`
 
 ```php
 $product = Product::create([
-    'name' => 'لابتوب Dell',
+    'name' => 'Laptop',
     'price' => 15000,
-    'quantity' => 10
+    'quantity' => 5,
 ]);
-
-echo $product->id;  // بيرجع الـ Model مع الـ id
 ```
+
+### السؤال: متى تعمل؟
+
+لما:
+
+- يكون عندك `$fillable`
+- وتريد إنشاء سريع وواضح
 
 ---
 
-#### الطريقة الثانية: `new` + `save()`
+### الطريقة الثانية: `new` ثم `save()`
 
 ```php
 $product = new Product();
-$product->name = 'لابتوب HP';
-$product->price = 12000;
+$product->name = 'Laptop';
+$product->price = 15000;
 $product->quantity = 5;
 $product->save();
-
-echo $product->id;
 ```
+
+### السؤال: أيهما أستخدم؟
+
+`create()` أسرع وأوضح في الحالات البسيطة.
+
+`new + save()` مفيدة لو:
+
+- تريد بناء الكائن تدريجيًا
+- أو تعمل logic قبل الحفظ
 
 ---
 
-#### الطريقة الثالثة: `firstOrCreate()`
+### الطريقة الثالثة: `firstOrCreate()`
 
 ```php
-// لو موجود يجيبه، لو مش موجود يعمله
 $product = Product::firstOrCreate(
-    ['name' => 'لابتوب Lenovo'],  // شرط البحث
-    ['price' => 13000, 'quantity' => 3]  // البيانات لو هيتعمل
+    ['name' => 'Laptop'],
+    ['price' => 15000, 'quantity' => 5]
 );
 ```
 
+يعني:
+
+- لو موجود، هاته
+- لو غير موجود، أنشئه
+
 ---
 
-#### الطريقة الرابعة: `updateOrCreate()`
+### الطريقة الرابعة: `updateOrCreate()`
 
 ```php
-// لو موجود يحدثه، لو مش موجود يعمله
 $product = Product::updateOrCreate(
-    ['name' => 'لابتوب Dell'],
-    ['price' => 16000, 'quantity' => 8]
+    ['name' => 'Laptop'],
+    ['price' => 16000, 'quantity' => 7]
 );
 ```
 
+يعني:
+
+- لو موجود، حدّثه
+- لو غير موجود، أنشئه
+
 ---
 
-### 2️⃣ Read - قراءة البيانات
+# الجزء السادس: قراءة البيانات
 
-#### جيب كل السجلات:
+## `all()`
 
 ```php
 $products = Product::all();
+```
 
-foreach ($products as $product) {
-    echo $product->name;
-}
+تجيب كل السجلات.
+
+### السؤال: هل أستخدمها دائمًا؟
+
+لا.
+
+في الجداول الكبيرة:
+
+`all()` قد تكون غير مناسبة.
+
+غالبًا الأفضل في القوائم:
+
+```php
+Product::paginate(10);
 ```
 
 ---
 
-#### جيب سجل واحد بالـ ID:
+## `find()`
 
 ```php
 $product = Product::find(1);
-
-if ($product) {
-    echo $product->name;
-} else {
-    echo "مش لاقي المنتج";
-}
 ```
+
+تبحث بالـ ID.
+
+لو لم تجد شيئًا:
+
+ترجع `null`.
 
 ---
 
-#### جيب أو ارمي Exception:
+## `findOrFail()`
 
 ```php
 $product = Product::findOrFail(1);
-// لو ملقاش، يظهر صفحة 404 تلقائياً
 ```
+
+لو لم تجد:
+
+Laravel ترمي exception غالبًا ينتج عنها `404`.
+
+وده شائع جدًا في controllers.
 
 ---
 
-#### جيب أول سجل:
+## `first()`
 
 ```php
 $product = Product::first();
 ```
 
+ترجع أول سجل.
+
 ---
 
-#### جيب سجل بشرط معين:
+## `where()`
 
 ```php
-$product = Product::where('name', 'لابتوب Dell')->first();
+$product = Product::where('name', 'Laptop')->first();
+```
+
+أو:
+
+```php
+$products = Product::where('price', '>', 10000)->get();
 ```
 
 ---
 
-#### جيب بشروط متعددة:
+## شروط متعددة
 
 ```php
 $products = Product::where('price', '>', 10000)
-                   ->where('quantity', '>', 0)
-                   ->get();
+    ->where('quantity', '>', 0)
+    ->get();
 ```
 
 ---
 
-#### جيب مع ترتيب:
+## ترتيب
 
 ```php
-// من الأرخص للأغلى
 $products = Product::orderBy('price', 'asc')->get();
-
-// من الأحدث للأقدم
 $products = Product::latest()->get();
-
-// من الأقدم للأحدث
 $products = Product::oldest()->get();
 ```
 
 ---
 
-#### جيب عدد محدود:
+## تحديد عدد
 
 ```php
-// أول 10 منتجات
-$products = Product::take(10)->get();
-
-// أول 5 منتجات الأغلى
-$products = Product::orderBy('price', 'desc')->limit(5)->get();
+$products = Product::take(5)->get();
+$products = Product::limit(10)->get();
 ```
 
 ---
 
-#### Pagination (ترقيم الصفحات):
+## pagination
 
 ```php
-// 15 منتج في الصفحة
-$products = Product::paginate(15);
+$products = Product::paginate(10);
+```
 
-// في الـ Blade
+وفي Blade:
+
+```blade
 {{ $products->links() }}
 ```
 
+### السؤال: ليه pagination مهمة؟
+
+لأن:
+
+- الأداء أفضل
+- تجربة المستخدم أفضل
+- لا تحمل الصفحة آلاف السجلات مرة واحدة
+
 ---
 
-### 3️⃣ Update - تحديث البيانات
+# الجزء السابع: تحديث البيانات
 
-#### الطريقة الأولى: `update()`
+## `update()`
 
 ```php
-$product = Product::find(1);
+$product = Product::findOrFail(1);
+
 $product->update([
     'price' => 17000,
-    'quantity' => 12
+    'quantity' => 8,
 ]);
 ```
 
 ---
 
-#### الطريقة الثانية: تغيير + `save()`
+## تغيير الحقول ثم `save()`
 
 ```php
-$product = Product::find(1);
+$product = Product::findOrFail(1);
 $product->price = 17000;
-$product->quantity = 12;
+$product->quantity = 8;
 $product->save();
 ```
 
+### السؤال: الفرق بين `update()` و `save()`؟
+
+`update()`:
+
+- سريعة للحالات البسيطة
+- تأخذ array
+
+`save()`:
+
+- مفيدة لو غيّرت properties واحدة واحدة
+
 ---
 
-#### تحديث مجموعة:
+## `increment()` و `decrement()`
 
 ```php
-// زوّد السعر 10% لكل المنتجات
-Product::where('price', '>', 10000)
-       ->update(['price' => DB::raw('price * 1.1')]);
-```
-
----
-
-#### `increment()` و `decrement()`:
-
-```php
-$product = Product::find(1);
-
-// زود الكمية
 $product->increment('quantity');
-$product->increment('quantity', 5);  // زود 5
+$product->increment('quantity', 5);
 
-// قلل الكمية
 $product->decrement('quantity');
-$product->decrement('quantity', 3);  // قلل 3
+$product->decrement('quantity', 2);
 ```
+
+مفيدة جدًا في:
+
+- stock
+- views
+- counters
 
 ---
 
-### 4️⃣ Delete - حذف البيانات
+# الجزء الثامن: حذف البيانات
 
-#### حذف سجل واحد:
+## `delete()`
 
 ```php
-$product = Product::find(1);
+$product = Product::findOrFail(1);
 $product->delete();
 ```
 
 ---
 
-#### حذف بالـ ID مباشرة:
+## `destroy()`
 
 ```php
 Product::destroy(1);
-
-// حذف أكتر من واحد
 Product::destroy([1, 2, 3]);
-Product::destroy(1, 2, 3);
 ```
 
 ---
 
-#### حذف بشرط:
+## حذف بشرط
 
 ```php
 Product::where('quantity', 0)->delete();
@@ -553,9 +832,38 @@ Product::where('quantity', 0)->delete();
 
 ---
 
-#### Soft Delete (حذف وهمي):
+## Soft Deletes
 
-**في الـ Model:**
+### السؤال: يعني إيه Soft Delete؟
+
+يعني:
+
+> السجل لا يُحذف فعليًا من الجدول، بل يُعلَّم كمحذوف
+
+وده مفيد لو:
+
+- تريد استرجاعه
+- تريد audit history
+- تريد الاحتفاظ بالبيانات
+
+---
+
+### في migration
+
+```php
+$table->softDeletes();
+```
+
+وده ينشئ عمود:
+
+```text
+deleted_at
+```
+
+---
+
+### في model
+
 ```php
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -565,222 +873,85 @@ class Product extends Model
 }
 ```
 
-**في الـ Migration:**
-```php
-$table->softDeletes();
-```
+---
 
-**الاستخدام:**
-```php
-$product = Product::find(1);
-$product->delete();  // مش بيتمسح، بس بيتعلّم محذوف
+### الاستخدام
 
-// جيب المحذوفات
+```php
+$product->delete();
+
 $deletedProducts = Product::onlyTrashed()->get();
-
-// جيب كل حاجة (عادي ومحذوف)
 $allProducts = Product::withTrashed()->get();
 
-// استرجاع المحذوف
 $product->restore();
-
-// حذف نهائي
 $product->forceDelete();
 ```
 
 ---
 
-## 🔍 استعلامات متقدمة (Query Scopes)
+# الجزء التاسع: العلاقات داخل الـ Model
 
-### Local Scopes - استعلامات مخصصة
+## السؤال: ليه العلاقات مهمة؟
 
-**تعريف الـ Scope:**
+لأن الجداول في الحياة الحقيقية لا تعيش وحدها.
+
+مثال:
+
+- كل منتج ينتمي إلى فئة
+- كل مستخدم له طلبات
+- كل مقال له تعليقات
+
+فالـ model لا تخزن بيانات نفسها فقط،
+بل تعرف أيضًا كيف ترتبط بغيرها.
+
+---
+
+## `belongsTo`
+
+مثال: المنتج ينتمي إلى فئة
+
 ```php
-class Product extends Model
+public function category()
 {
-    // منتجات متاحة
-    public function scopeAvailable($query)
-    {
-        return $query->where('quantity', '>', 0);
-    }
-    
-    // منتجات نشطة
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
-    }
-    
-    // منتجات غالية (أكتر من سعر معين)
-    public function scopeExpensive($query, $price = 10000)
-    {
-        return $query->where('price', '>', $price);
-    }
+    return $this->belongsTo(Category::class);
 }
-```
-
-**الاستخدام:**
-```php
-// جيب المنتجات المتاحة
-$products = Product::available()->get();
-
-// جيب المنتجات النشطة والمتاحة
-$products = Product::active()->available()->get();
-
-// جيب المنتجات الغالية
-$products = Product::expensive(15000)->get();
 ```
 
 ---
 
-### Global Scopes - استعلامات عامة
+## `hasMany`
 
-**مثال: إخفاء المنتجات المحذوفة تلقائياً:**
+مثال: الفئة لها منتجات كثيرة
 
 ```php
-namespace App\Models\Scopes;
-
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Scope;
-
-class ActiveScope implements Scope
+public function products()
 {
-    public function apply(Builder $builder, Model $model)
-    {
-        $builder->where('is_active', true);
-    }
+    return $this->hasMany(Product::class);
 }
-```
-
-**تطبيقه في الـ Model:**
-```php
-use App\Models\Scopes\ActiveScope;
-
-class Product extends Model
-{
-    protected static function booted()
-    {
-        static::addGlobalScope(new ActiveScope);
-    }
-}
-```
-
-**النتيجة:**
-```php
-// تلقائياً بيجيب النشطة بس
-$products = Product::all();
-
-// لو عايز كل حاجة
-$products = Product::withoutGlobalScope(ActiveScope::class)->get();
 ```
 
 ---
 
-## 🎨 Accessors & Mutators (Getters & Setters)
+## `belongsToMany`
 
-### Accessors - تعديل قيمة عند القراءة
-
-**مثال: تحويل الاسم لحروف كبيرة:**
+مثال: المنتج له وسوم كثيرة، والوسم له منتجات كثيرة
 
 ```php
-class Product extends Model
+public function tags()
 {
-    // get + اسم الحقل + Attribute
-    public function getNameAttribute($value)
-    {
-        return strtoupper($value);
-    }
-    
-    // عرض السعر بالعملة
-    public function getPriceFormattedAttribute()
-    {
-        return number_format($this->price, 2) . ' جنيه';
-    }
+    return $this->belongsToMany(Tag::class);
 }
-```
-
-**الاستخدام:**
-```php
-$product = Product::find(1);
-
-echo $product->name;              // LAPTOP DELL (حروف كبيرة)
-echo $product->price_formatted;   // 15,000.00 جنيه
 ```
 
 ---
 
-### Mutators - تعديل قيمة عند الحفظ
-
-**مثال: تحويل الاسم لحروف صغيرة قبل الحفظ:**
+## الاستخدام
 
 ```php
-class Product extends Model
-{
-    // set + اسم الحقل + Attribute
-    public function setNameAttribute($value)
-    {
-        $this->attributes['name'] = strtolower($value);
-    }
-    
-    // تشفير الباسورد تلقائياً
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = bcrypt($value);
-    }
-}
-```
+$product = Product::findOrFail(1);
 
-**الاستخدام:**
-```php
-$product = new Product();
-$product->name = 'LAPTOP DELL';  // هيتحفظ: laptop dell
-$product->save();
-```
-
----
-
-## 🔗 استخدام العلاقات في الـ Model
-
-### مثال: منتج وفئته
-
-```php
-class Product extends Model
-{
-    protected $fillable = ['name', 'price', 'category_id'];
-    
-    // علاقة مع الفئة
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
-    
-    // علاقة مع التعليقات
-    public function comments()
-    {
-        return $this->hasMany(Comment::class);
-    }
-    
-    // علاقة مع الوسوم
-    public function tags()
-    {
-        return $this->belongsToMany(Tag::class);
-    }
-}
-```
-
-**الاستخدام:**
-```php
-$product = Product::find(1);
-
-// الفئة
 echo $product->category->name;
 
-// التعليقات
-foreach ($product->comments as $comment) {
-    echo $comment->content;
-}
-
-// الوسوم
 foreach ($product->tags as $tag) {
     echo $tag->name;
 }
@@ -788,109 +959,174 @@ foreach ($product->tags as $tag) {
 
 ---
 
-## 📊 تحميل العلاقات (Eager Loading)
+# الجزء العاشر: Eager Loading
 
-### مشكلة N+1:
+## السؤال: ما المشكلة التي يحلها؟
+
+مشكلة مشهورة جدًا اسمها:
+
+## N+1 Problem
+
+مثال سيء:
 
 ```php
-// ❌ بطيء - بيعمل استعلام لكل منتج!
 $products = Product::all();
-foreach ($products as $product) {
-    echo $product->category->name;  // استعلام جديد!
-}
-```
 
----
-
-### الحل - Eager Loading:
-
-```php
-// ✅ سريع - استعلام واحد
-$products = Product::with('category')->get();
 foreach ($products as $product) {
     echo $product->category->name;
 }
 ```
 
+هنا قد Laravel تعمل استعلامًا إضافيًا لكل منتج.
+
 ---
 
-### تحميل أكتر من علاقة:
+## الحل
 
 ```php
-$products = Product::with(['category', 'comments', 'tags'])->get();
+$products = Product::with('category')->get();
 ```
 
----
-
-### تحميل علاقات متداخلة:
+أو:
 
 ```php
-// جيب المنتج مع الفئة ومع المنتجات التانية في نفس الفئة
-$product = Product::with('category.products')->find(1);
+$products = Product::with(['category', 'tags'])->get();
 ```
+
+### القاعدة العملية
+
+لو تعرف أنك ستستخدم العلاقة:
+
+> اعمل eager loading من البداية
 
 ---
 
-### تحميل شرطي:
+# الجزء الحادي عشر: Scopes
+
+## السؤال: يعني إيه Scope؟
+
+لو عندك استعلام يتكرر كثيرًا:
 
 ```php
-$products = Product::with(['comments' => function($query) {
-    $query->where('is_approved', true)
-          ->orderBy('created_at', 'desc');
-}])->get();
+Product::where('is_active', true)->where('quantity', '>', 0)
 ```
+
+بدل ما تكرره، اعمله scope.
 
 ---
 
-## 🎯 Events في الـ Model
-
-### الأحداث المتاحة:
+## Local Scope
 
 ```php
 class Product extends Model
 {
-    protected static function booted()
+    public function scopeActive($query)
     {
-        // قبل الإنشاء
-        static::creating(function ($product) {
-            $product->slug = Str::slug($product->name);
-        });
-        
-        // بعد الإنشاء
-        static::created(function ($product) {
-            // أرسل إيميل للأدمن
-            Mail::to('admin@example.com')->send(new ProductCreated($product));
-        });
-        
-        // قبل التحديث
-        static::updating(function ($product) {
-            // سجل التغييرات
-        });
-        
-        // بعد التحديث
-        static::updated(function ($product) {
-            Cache::forget('product_' . $product->id);
-        });
-        
-        // قبل الحذف
-        static::deleting(function ($product) {
-            // امسح الصورة
-            Storage::delete($product->image);
-        });
-        
-        // بعد الحذف
-        static::deleted(function ($product) {
-            // سجل العملية
-        });
+        return $query->where('is_active', true);
     }
+
+    public function scopeAvailable($query)
+    {
+        return $query->where('quantity', '>', 0);
+    }
+}
+```
+
+### الاستخدام
+
+```php
+$products = Product::active()->available()->get();
+```
+
+وده أنظف بكثير.
+
+---
+
+# الجزء الثاني عشر: Accessors و Mutators و Casts
+
+## Accessor
+
+تستخدم لما تريد تعديل القيمة عند القراءة.
+
+مثال:
+
+```php
+public function getPriceFormattedAttribute()
+{
+    return number_format($this->price, 2) . ' ج.م';
+}
+```
+
+الاستخدام:
+
+```php
+echo $product->price_formatted;
+```
+
+---
+
+## Mutator
+
+تستخدم لما تريد تعديل القيمة قبل الحفظ.
+
+مثال:
+
+```php
+public function setNameAttribute($value)
+{
+    $this->attributes['name'] = trim($value);
 }
 ```
 
 ---
 
-## 🔧 أمثلة عملية كاملة
+## Casts
 
-### مثال 1: Model منتج كامل
+غالبًا في Laravel الحديثة، كثير من التحويلات الأفضل تكون عبر:
+
+```php
+protected $casts = [
+    'is_active' => 'boolean',
+    'price' => 'decimal:2',
+    'published_at' => 'datetime',
+    'metadata' => 'array',
+];
+```
+
+---
+
+# الجزء الثالث عشر: Events داخل الـ Model
+
+## السؤال: إمتى أستخدمها؟
+
+لو عندك سلوك مرتبط دائمًا بالـ model.
+
+مثال:
+
+- إنشاء slug عند الإنشاء
+- تنظيف cache بعد التحديث
+- حذف ملف عند الحذف
+
+مثال:
+
+```php
+protected static function booted()
+{
+    static::creating(function ($product) {
+        $product->slug = \Illuminate\Support\Str::slug($product->name);
+    });
+}
+```
+
+### تنبيه مهم
+
+مفيد جدًا، لكن لا تبالغ.
+
+لو المنطق صار معقدًا جدًا، service أو observer قد يكون أفضل.
+
+---
+
+# الجزء الرابع عشر: مثال Model نظيف
 
 ```php
 <?php
@@ -899,285 +1135,233 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
 class Product extends Model
 {
     use SoftDeletes;
-    
-    // الجدول (اختياري - Laravel بيعرفه تلقائياً)
-    protected $table = 'products';
-    
-    // الحقول المسموح ملؤها
+
     protected $fillable = [
         'name',
         'slug',
         'description',
         'price',
-        'discount_price',
         'quantity',
-        'sku',
-        'image',
         'is_active',
-        'category_id'
+        'category_id',
     ];
-    
-    // الحقول المخفية
-    protected $hidden = [
-        'admin_notes'
-    ];
-    
-    // تحويل الأنواع
+
     protected $casts = [
         'is_active' => 'boolean',
         'price' => 'decimal:2',
-        'discount_price' => 'decimal:2',
-        'published_at' => 'datetime'
     ];
-    
-    // ===== العلاقات =====
-    
+
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
-    
-    public function comments()
-    {
-        return $this->hasMany(Comment::class);
-    }
-    
+
     public function tags()
     {
         return $this->belongsToMany(Tag::class);
     }
-    
-    // ===== Scopes =====
-    
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
     }
-    
+
     public function scopeAvailable($query)
     {
         return $query->where('quantity', '>', 0);
     }
-    
-    public function scopeFeatured($query)
-    {
-        return $query->where('is_featured', true);
-    }
-    
-    // ===== Accessors =====
-    
+
     public function getPriceFormattedAttribute()
     {
         return number_format($this->price, 2) . ' ج.م';
     }
-    
-    public function getDiscountPercentAttribute()
-    {
-        if ($this->discount_price) {
-            return round((($this->price - $this->discount_price) / $this->price) * 100);
-        }
-        return 0;
-    }
-    
-    public function getIsOnSaleAttribute()
-    {
-        return $this->discount_price && $this->discount_price < $this->price;
-    }
-    
-    // ===== Mutators =====
-    
-    public function setNameAttribute($value)
-    {
-        $this->attributes['name'] = ucfirst($value);
-        $this->attributes['slug'] = Str::slug($value);
-    }
-    
-    // ===== Events =====
-    
-    protected static function booted()
-    {
-        static::creating(function ($product) {
-            if (!$product->sku) {
-                $product->sku = 'PRD-' . strtoupper(Str::random(8));
-            }
-        });
-        
-        static::deleting(function ($product) {
-            // امسح الصورة
-            if ($product->image) {
-                Storage::delete($product->image);
-            }
-        });
-    }
 }
 ```
 
 ---
 
-### الاستخدام:
+# الجزء الخامس عشر: Clean Code و Best Practices
 
-```php
-// إنشاء منتج جديد
-$product = Product::create([
-    'name' => 'لابتوب Dell XPS 15',
-    'description' => 'لابتوب قوي للمطورين',
-    'price' => 45000,
-    'discount_price' => 40000,
-    'quantity' => 10,
-    'category_id' => 1
-]);
+## 1. لا تجعل الـ Model مجرد حاوية فارغة لو عندك منطق خاص بها
 
-// الـ SKU والـ slug اتعملوا تلقائياً!
+لو عندك:
 
-// جيب المنتجات النشطة والمتاحة
-$products = Product::active()->available()->get();
+- scopes
+- relations
+- casts
+- accessors بسيطة
 
-// جيب منتج مع علاقاته
-$product = Product::with(['category', 'comments', 'tags'])->find(1);
-
-// اعرض البيانات
-echo $product->name;                  // اسم المنتج
-echo $product->price_formatted;       // 45,000.00 ج.م
-echo $product->discount_percent;      // 11
-echo $product->is_on_sale;            // true
-echo $product->category->name;        // إلكترونيات
-```
+مكانها الطبيعي في الـ model.
 
 ---
 
-## 💡 نصائح مهمة
+## 2. لكن لا تحول الـ Model إلى وحش
 
-### 1️⃣ استخدم Resource Controllers
+لو model بدأت تحتوي:
 
-```bash
-php artisan make:model Product -mcr
-```
+- business logic ضخمة
+- integrations
+- payment rules
+- workflow معقد
 
----
+فأنت غالبًا تحتاج:
 
-### 2️⃣ استخدم Eager Loading دايماً
-
-```php
-// ✅ صح
-Product::with('category')->get();
-
-// ❌ غلط
-Product::all(); // ثم تستدعي category لكل منتج
-```
+- service
+- action
+- domain class
 
 ---
 
-### 3️⃣ استخدم Scopes للاستعلامات المتكررة
+## 3. استخدم `$fillable` بوضوح
 
-```php
-// بدل ما تكرر الكود ده:
-Product::where('is_active', true)->where('quantity', '>', 0)->get();
-
-// اعمل scope:
-Product::active()->available()->get();
-```
+ودي من أهم best practices.
 
 ---
 
-### 4️⃣ استخدم Accessors للحسابات
+## 4. استخدم eager loading عند الحاجة
 
-```php
-// بدل:
-$discountPercent = (($product->price - $product->discount_price) / $product->price) * 100;
-
-// استخدم:
-$product->discount_percent;
-```
+خصوصًا في القوائم.
 
 ---
 
-### 5️⃣ استخدم Events للعمليات الجانبية
+## 5. استخدم scopes للاستعلامات المتكررة
 
-```php
-// بدل ما تكتب في الـ Controller:
-$product->delete();
-Storage::delete($product->image);
-
-// اكتب في الـ Model:
-static::deleting(function ($product) {
-    Storage::delete($product->image);
-});
-```
+عشان الكود يبقى نظيفًا ومقروءًا.
 
 ---
 
-## 🐛 أخطاء شائعة وحلولها
+## 6. لا تكتب حسابات العرض في controller كل مرة
 
-### الخطأ 1: "Add [name] to fillable property"
-
-**السبب:** الحقل مش في `$fillable`
-
-**الحل:**
-```php
-protected $fillable = ['name', 'price', ...];
-```
+لو عندك قيمة محسوبة تتكرر، accessor قد يكون مناسبًا.
 
 ---
 
-### الخطأ 2: "Call to undefined relationship"
+## 7. لا تخلط بين "منطق العرض" و"منطق البيانات"
 
-**السبب:** العلاقة مش موجودة أو مكتوبة غلط
-
-**الحل:**
-```php
-public function category()  // تأكد من الاسم
-{
-    return $this->belongsTo(Category::class);
-}
-```
+الـ model تتعامل مع البيانات.
+الـ view تعرض.
+الـ controller تنسق.
 
 ---
 
-### الخطأ 3: "Trying to get property of non-object"
+# الجزء السادس عشر: أخطاء شائعة جدًا
 
-**السبب:** العلاقة null
+## 1. `Add [field] to fillable property`
 
-**الحل:**
+السبب:
+
+الحقل ليس داخل `$fillable`.
+
+---
+
+## 2. `Call to undefined relationship`
+
+السبب:
+
+اسم العلاقة غير موجود أو مكتوب بشكل خاطئ.
+
+---
+
+## 3. `Trying to get property of non-object`
+
+غالبًا لأن العلاقة `null`.
+
+مثال:
+
 ```php
 echo $product->category?->name ?? 'بدون فئة';
 ```
 
 ---
 
-## 📚 ملخص سريع
+## 4. استخدام `all()` في مكان لا يناسب
 
-**الـ Model هو:**
-- ✅ الوسيط بين الكود والداتابيز
-- ✅ بيسهل التعامل مع البيانات
-- ✅ بيوفر دوال جاهزة للـ CRUD
-- ✅ بيدير العلاقات بين الجداول
-
-**أهم الدوال:**
-```php
-// إنشاء
-Product::create([...]);
-
-// قراءة
-Product::all();
-Product::find(1);
-Product::where('price', '>', 1000)->get();
-
-// تحديث
-$product->update([...]);
-
-// حذف
-$product->delete();
-```
+قد يسبب مشاكل أداء.
 
 ---
 
-**مبروك! 🎉 دلوقتي فاهم الـ Models كويس!**
+## 5. Model مكتوب فيها كل شيء
 
-صُنع بحب ❤️ لكل مطور لارافيل
+دي مشكلة تصميم وليست error تقني.
+
+---
+
+# الجزء السابع عشر: أسئلة المبتدئ
+
+## هل كل جدول لازم له Model؟
+
+في أغلب مشاريع Laravel:
+
+نعم غالبًا.
+
+لكن مش شرط 100% لكل حالة نادرة.
+
+---
+
+## هل الـ Model هي نفسها الـ migration؟
+
+لا.
+
+- migration تصمم الجدول
+- model تتعامل مع الجدول
+
+---
+
+## هل لازم اسم الـ Model يكون مفرد؟
+
+نعم غالبًا هذا هو الصحيح في Laravel convention.
+
+---
+
+## هل ينفع أستخدم SQL مباشر بدل model؟
+
+نعم.
+
+لكن في أغلب الشغل الطبيعي داخل Laravel، Eloquent أوضح وأسهل.
+
+---
+
+## هل كل شيء لازم يتحط في model؟
+
+لا.
+
+الـ model لها دور، لكنها ليست مكان كل منطق المشروع.
+
+---
+
+# الجزء الثامن عشر: الملخص النهائي
+
+## الـ Model هي
+
+الكلاس التي تمثل جدولًا في قاعدة البيانات، وتسمح لك:
+
+- بقراءة البيانات
+- بإنشائها
+- بتحديثها
+- بحذفها
+- بربطها بجداول أخرى
+- وبناء استعلامات نظيفة عبر Eloquent
+
+---
+
+## الجملة الذهبية
+
+لو عايز تختصر الدرس كله:
+
+> الـ Model في Laravel هي التمثيل البرمجي للجدول داخل قاعدة البيانات، وEloquent هي الأداة التي تجعل التعامل مع هذا الجدول طبيعيًا وسهلًا ونظيفًا داخل الكود.
+
+---
+
+## الخطوة التالية
+
+بعد ما فهمت الـ Models، فالدرس الطبيعي التالي هو:
+
+## `10-laravel-relationships-guide.md`
+
+لأن العلاقات هي التوسع الطبيعي لفهم الـ models في الحياة الحقيقية.
 
 </div>
